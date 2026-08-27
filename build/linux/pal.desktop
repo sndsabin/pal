@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=pal
+Exec=pal
+Icon=pal
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false
