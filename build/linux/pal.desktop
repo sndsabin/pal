@@ -1,9 +1,11 @@
 [Desktop Entry]
 Type=Application
 Name=pal
+Comment=Pal is a simple system tray app for keeping track of time across the world.
 Exec=pal
 Icon=pal
-Categories=Utility;
+Categories=Development;
 Terminal=false
+Keywords=time;clock;world clock;timezone;time zone;tracking;tray;system tray;utility;
 Version=1.0
 StartupNotify=false
