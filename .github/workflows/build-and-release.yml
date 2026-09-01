@@ -76,12 +76,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install Wails v3 CLI
-        run: |
-          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
-        shell: bash
-
       # ----- Linux Dependencies -----
       - name: Install Linux dependencies
         if: *is_linux
@@ -92,12 +86,17 @@ jobs:
           if [ "$UBUNTU_VERSION" -ge "24" ]; then
             echo "Detected Ubuntu 24.04+"
             sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
-            echo "USE_GTK3=false" >> $GITHUB_ENV
           else
             echo "Detected older Ubuntu"
             sudo apt-get install -y build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
-            echo "USE_GTK3=true" >> $GITHUB_ENV
           fi
+        shell: bash
+
+      # ----- Wails v3 CLI -----
+      - name: Install Wails v3 CLI
+        run: |
+          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
         shell: bash
 
       # ----- Windows Dependencies -----
@@ -138,21 +137,26 @@ jobs:
           else
             WINDOWS_VERSION="${VERSION#v}.0"
           fi
-          jq --arg v "$WINDOWS_VERSION" '.Info.productVersion = $v' wails.json > tmp.json && mv tmp.json wails.json
+
+          LANG_KEY=$(jq -r '.info | keys[0]' build/windows/info.json)
+          jq --arg v "$WINDOWS_VERSION" --arg key "$LANG_KEY" \
+            '.fixed.file_version = $v | .info[$key].ProductVersion = $v' \
+            build/windows/info.json > tmp.json && mv tmp.json build/windows/info.json
         shell: bash
 
       # ----- Build Step -----
       - name: Build App
         run: |
-          if [ "${IS_WINDOWS}" = "true" ]; then
+          if [ "${{ matrix.platform }}" = "windows" ]; then
             wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
-          elif [ "${IS_LINUX}" = "true" ]; then
-            if [ "${USE_GTK3}" = "true" ]; then
+          elif [ "${{ matrix.platform }}" = "linux" ]; then
+            UBUNTU_VERSION=$(lsb_release -rs | cut -d. -f1)
+            if [ "$UBUNTU_VERSION" -lt "24" ]; then
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} -tags gtk3
             else
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
             fi
-          elif [ "${IS_MAC}" = "true" ]; then
+          elif [ "${{ matrix.platform }}" = "macOS" ]; then
             wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
           fi
         shell: bash
@@ -180,7 +184,7 @@ jobs:
           wails3 task linux:package
           mkdir -p staging
           cp bin/*.deb bin/*.rpm bin/*.AppImage bin/*.pkg.tar.zst staging/ 2>/dev/null || true
-          cp build/bin/${APP_NAME} staging/
+          cp bin/${APP_NAME} staging/
         shell: bash
 
       # ----- macOS Packaging (DMG) -----
@@ -189,7 +193,7 @@ jobs:
         run: |
           wails3 task darwin:package:dmg
           mkdir -p staging
-          cp -R build/bin/${APP_NAME}.app staging/
+          cp -R bin/${APP_NAME}.app staging/
           cp *.dmg staging/${APP_NAME}_${VERSION}_universal.dmg 2>/dev/null || true
         shell: bash
 
