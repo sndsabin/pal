@@ -24,7 +24,7 @@ func (up *UserPreferenceRepository) GetById(id int) (*models.UserPreference, err
 	defer cancel()
 
 	query := `
-		SELECT * FROM user_preferences WHERE id = $1;
+		SELECT id, time_format, created_at, updated_at FROM user_preferences WHERE id = $1;
 	`
 
 	row := up.db.QueryRowContext(ctx, query, id)
