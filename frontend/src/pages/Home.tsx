@@ -115,15 +115,6 @@ const Home = () => {
   }, [rawTrackedLocations, timeFormat, homeLocation, tick]);
 
   useEffect(() => {
-    api
-      .getTrackedLocation()
-      .then((locations) => {})
-      .catch((err) => {
-        reportError(err);
-      });
-  }, [homeLocation]);
-
-  useEffect(() => {
     const options = trackedLocations.map((location) => {
       return {
         name: location.name,
