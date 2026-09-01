@@ -186,13 +186,12 @@ jobs:
       - name: Create Windows installers
         if: *is_windows
         run: |
-          mkdir staging -Force
+          mkdir -p staging
 
           # Build NSIS installer (default format)
           wails3 task windows:package
-          Copy-Item build/windows/nsis/*-installer.exe staging/ -ErrorAction SilentlyContinue
-
-        shell: pwsh
+          cp bin/${APP_NAME}-amd64-installer.exe staging/${APP_NAME}_${VERSION}_amd64_installer.exe
+        shell: bash
 
       # ----- Linux Packaging (DEB, RPM, AppImage, Arch) -----
       - name: Create Linux packages
@@ -200,8 +199,10 @@ jobs:
         run: |
           wails3 task linux:package
           mkdir -p staging
-          cp bin/*.deb bin/*.rpm bin/*.AppImage bin/*.pkg.tar.zst staging/ 2>/dev/null || true
-          cp bin/${APP_NAME} staging/
+          cp bin/${APP_NAME}.deb staging/${APP_NAME}_${VERSION}.deb
+          cp bin/${APP_NAME}.rpm staging/${APP_NAME}_${VERSION}.rpm
+          cp bin/${APP_NAME}-x86_64.AppImage staging/${APP_NAME}_${VERSION}-x86_64.AppImage
+          cp bin/${APP_NAME}.pkg.tar.zst staging/${APP_NAME}_${VERSION}.pkg.tar.zst
         shell: bash
 
       # ----- macOS Packaging (DMG) -----
@@ -210,8 +211,7 @@ jobs:
         run: |
           wails3 task darwin:package:dmg
           mkdir -p staging
-          cp -R bin/${APP_NAME}.app staging/
-          cp *.dmg staging/${APP_NAME}_${VERSION}_universal.dmg 2>/dev/null || true
+          cp bin/${APP_NAME}.dmg staging/${APP_NAME}_${VERSION}_universal.dmg
         shell: bash
 
       # ----- Upload Artifacts -----
