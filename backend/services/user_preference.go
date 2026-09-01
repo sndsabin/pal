@@ -51,6 +51,7 @@ func (up *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
 }
 
 func (up *UserPreferenceService) getUserPreference() (*models.UserPreference, error) {
+	// user preference table has only one row as of now.
 	userPreference, err := up.userPreferenceRepository.GetById(1)
 	if err != nil {
 		up.logger.Error("error fetching user preference: " + err.Error())
