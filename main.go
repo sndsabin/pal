@@ -98,6 +98,10 @@ func main() {
 		},
 	})
 
+	app.OnShutdown(func() {
+		backendApp.Close()
+	})
+
 	// auto start
 	if err := app.Autostart.Enable(); err != nil {
 		if !errors.Is(err, application.ErrAutostartNotSupported) {

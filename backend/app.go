@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"database/sql"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -18,6 +19,7 @@ var dbFS []byte
 
 type App struct {
 	Logger                 *logging.Logger
+	db                     *sql.DB
 	LocationService        *services.LocationService
 	UserPreferenceService  *services.UserPreferenceService
 	ApplicationInfoService *services.ApplicationInfoService
@@ -70,8 +72,19 @@ func New(appName string, appVersion string) (*App, error) {
 
 	return &App{
 		Logger:                 logger,
+		db:                     db,
 		LocationService:        locationService,
 		UserPreferenceService:  userPreferenceService,
 		ApplicationInfoService: applicationInfoService,
 	}, nil
+}
+
+func (a *App) Close() {
+	if a.db != nil {
+		if err := a.db.Close(); err != nil {
+			a.Logger.Error("error closing db: " + err.Error())
+		}
+	}
+
+	a.Logger.Close()
 }
