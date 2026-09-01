@@ -17,9 +17,9 @@ func NewApplicationInfoService(name string, version string) *ApplicationInfoServ
 	}
 }
 
-func (a *ApplicationInfo) GetAppInfo() ApplicationInfo {
+func (ai *ApplicationInfoService) GetAppInfo() ApplicationInfo {
 	return ApplicationInfo{
-		Name:    a.Name,
-		Version: a.Version,
+		Name:    ai.name,
+		Version: ai.version,
 	}
 }
