@@ -19,8 +19,8 @@ func NewUserService(logger *logging.Logger, upRepo repositories.UserPreferenceRe
 	}
 }
 
-func (us *UserPreferenceService) GetTimeFormat() (models.TimeFormat, error) {
-	userPreference, err := us.getUserPrefernce()
+func (up *UserPreferenceService) GetTimeFormat() (models.TimeFormat, error) {
+	userPreference, err := up.getUserPreference()
 	if err != nil {
 		return "", err
 	}
@@ -28,8 +28,8 @@ func (us *UserPreferenceService) GetTimeFormat() (models.TimeFormat, error) {
 	return userPreference.TimeFormat, nil
 }
 
-func (us *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
-	userPreference, err := us.getUserPrefernce()
+func (up *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
+	userPreference, err := up.getUserPreference()
 	if err != nil {
 		return err
 	}
@@ -40,9 +40,9 @@ func (us *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
 	}
 	userPreference.TimeFormat = tf
 
-	err = us.userPreferenceRepository.Update(*userPreference)
+	err = up.userPreferenceRepository.Update(*userPreference)
 	if err != nil {
-		us.logger.Error("error updating user preference: " + err.Error())
+		up.logger.Error("error updating user preference: " + err.Error())
 
 		return errors.New("error saving preference")
 	}
@@ -50,10 +50,10 @@ func (us *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
 	return nil
 }
 
-func (us *UserPreferenceService) getUserPrefernce() (*models.UserPreference, error) {
-	userPreference, err := us.userPreferenceRepository.GetById(1)
+func (up *UserPreferenceService) getUserPreference() (*models.UserPreference, error) {
+	userPreference, err := up.userPreferenceRepository.GetById(1)
 	if err != nil {
-		us.logger.Error("error fetching user preference: " + err.Error())
+		up.logger.Error("error fetching user preference: " + err.Error())
 
 		return nil, errors.New("error fetching user preference.")
 	}

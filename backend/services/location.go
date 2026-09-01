@@ -38,14 +38,14 @@ func NewLocationService(
 	}
 }
 
-func (ls *LocationService) SearchLocation(name string, limit int) ([]models.LocationSearchResult, error) {
+func (l *LocationService) SearchLocation(name string, limit int) ([]models.LocationSearchResult, error) {
 	if name == "" {
 		return []models.LocationSearchResult{}, fmt.Errorf("name cannot be empty")
 	}
 
-	result, err := ls.locationSearchRepository.FindLocation(name, limit)
+	result, err := l.locationSearchRepository.FindLocation(name, limit)
 	if err != nil {
-		ls.logger.Error("error finding location: " + err.Error())
+		l.logger.Error("error finding location: " + err.Error())
 
 		return []models.LocationSearchResult{}, errors.New("error finding location")
 	}
@@ -58,8 +58,8 @@ func (ls *LocationService) SearchLocation(name string, limit int) ([]models.Loca
 	return locations, nil
 }
 
-func (ls *LocationService) GetHomeLocation() (models.UserLocation, error) {
-	locations, err := ls.userLocationRepository.GetLocationByType(string(models.LocationTypeHome))
+func (l *LocationService) GetHomeLocation() (models.UserLocation, error) {
+	locations, err := l.userLocationRepository.GetLocationByType(string(models.LocationTypeHome))
 	if err != nil {
 		return models.UserLocation{}, err
 	}
@@ -74,8 +74,8 @@ func (ls *LocationService) GetHomeLocation() (models.UserLocation, error) {
 	}
 }
 
-func (ls *LocationService) GetTrackedLocation() ([]models.UserLocation, error) {
-	result, err := ls.userLocationRepository.GetLocationByType(string(models.LocationTypeTracked))
+func (l *LocationService) GetTrackedLocation() ([]models.UserLocation, error) {
+	result, err := l.userLocationRepository.GetLocationByType(string(models.LocationTypeTracked))
 	if err != nil {
 		return []models.UserLocation{}, err
 	}
@@ -88,10 +88,10 @@ func (ls *LocationService) GetTrackedLocation() ([]models.UserLocation, error) {
 	return locations, nil
 }
 
-func (ls *LocationService) UpsertHomeLocation(location LocationPayload) error {
-	homeLocation, err := ls.GetHomeLocation()
+func (l *LocationService) UpsertHomeLocation(location LocationPayload) error {
+	homeLocation, err := l.GetHomeLocation()
 	if err != nil {
-		ls.logger.Error("error getting home location: " + err.Error())
+		l.logger.Error("error getting home location: " + err.Error())
 		return errors.New("error getting home location")
 	}
 
@@ -109,20 +109,20 @@ func (ls *LocationService) UpsertHomeLocation(location LocationPayload) error {
 	homeLocation.Timezone = location.Timezone
 
 	if isNew {
-		err = ls.userLocationRepository.Create(homeLocation)
+		err = l.userLocationRepository.Create(homeLocation)
 	} else {
-		err = ls.userLocationRepository.Update(homeLocation)
+		err = l.userLocationRepository.Update(homeLocation)
 	}
 
 	if err != nil {
-		ls.logger.Error("error updating home location: " + err.Error())
+		l.logger.Error("error updating home location: " + err.Error())
 		return errors.New("error updating home location")
 	}
 
 	return nil
 }
 
-func (ls *LocationService) AddTrackedLocation(location LocationPayload) error {
+func (l *LocationService) AddTrackedLocation(location LocationPayload) error {
 	userLocation := models.UserLocation{
 		LocationType: models.LocationTypeTracked,
 		CityID:       location.CityID,
@@ -136,19 +136,19 @@ func (ls *LocationService) AddTrackedLocation(location LocationPayload) error {
 		Timezone:     location.Timezone,
 	}
 
-	err := ls.userLocationRepository.Create(userLocation)
+	err := l.userLocationRepository.Create(userLocation)
 	if err != nil {
-		ls.logger.Error("error adding location: " + err.Error())
+		l.logger.Error("error adding location: " + err.Error())
 		return errors.New("error saving location")
 	}
 
 	return nil
 }
 
-func (ls *LocationService) DeleteTrackedLocation(id int) error {
-	err := ls.userLocationRepository.Delete(id)
+func (l *LocationService) DeleteTrackedLocation(id int) error {
+	err := l.userLocationRepository.Delete(id)
 	if err != nil {
-		ls.logger.Error("error deleting location: " + err.Error())
+		l.logger.Error("error deleting location: " + err.Error())
 		return errors.New("error deleting location")
 	}
 
