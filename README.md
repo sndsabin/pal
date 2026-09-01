@@ -4,15 +4,15 @@
 
 # pal
 
-pal (पल), meaning “a moment in time.” Pronounced simply “pal.”
+pal (पल), Nepali for “a moment in time”. Pronounced simply “pal.”
 
 Pal is a simple system tray app for keeping track of time across the world.
 
-Add the cities and locations that matter to you and see their local times at a glance. Pal also makes it easy to answer everyday time-zone questions:
+Add the cities and locations that matter to you and see their local times at a glance. Pal also makes it easy to answer everyday timezone questions:
 
-“When it’s 4 PM in Sydney, what time is it in Kathmandu?”
+> “When it’s 4 PM in Tokyo, what time is it in Kathmandu?”
 
-With pal, you can quickly compare locations and find the corresponding time in another part of the world without doing the mental math.
+With pal, you can quickly compare locations and find the corresponding time in another part of the world without doing the math.
 
 Whether you work with people around the world, have friends and family in different time zones, or simply want an easier way to keep track of global time, pal helps you stay in sync with every moment, wherever it happens.
 
@@ -38,7 +38,7 @@ Whether you work with people around the world, have friends and family in differ
 >
 > 1. Open **System Settings** $\rightarrow$ **Privacy & Security**.
 > 2. Scroll down to the **Security** section.
-> 3. Locate the notification for `Servitor` and click **Open Anyway**.
+> 3. Locate the notification for `pal` and click **Open Anyway**.
 > 4. Enter your system password or use Touch ID to confirm.
 >
 > **Official Apple Guide:** [Open a Mac app from an unidentified developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac)
