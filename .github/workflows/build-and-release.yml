@@ -1,0 +1,253 @@
+name: Build and Package Pal App
+
+on:
+  push:
+    tags:
+      - "v*" # Trigger on version tags (e.g., v1.0.0)
+  pull_request:
+    branches: [master] # Trigger on pull request targeting master branch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to build (e.g., v0.1.0)"
+        required: true
+        type: string
+
+env:
+  NODE_OPTIONS: "--max-old-space-size=4096"
+  APP_NAME: "pal"
+  # holds the YAML anchor (immutable) for reuse. The actual value is overridden
+  # at the job level to become a true/false boolean for shell scripts.
+  IS_LINUX: &is_linux "matrix.platform == 'linux'"
+  IS_WINDOWS: &is_windows "matrix.platform == 'windows'"
+  IS_MAC: &is_mac "matrix.platform == 'macOS'"
+  IS_GITHUB_RELEASE_TRIGGER_EVENT: &is_github_release_trigger_event "github.event_name == 'push' || github.event_name == 'workflow_dispatch'"
+
+permissions:
+  contents: write # for creating GitHub Releases
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            goos: linux
+            goarch: amd64
+          - os: windows-latest
+            platform: windows
+            goos: windows
+            goarch: amd64
+          - os: macos-latest
+            platform: macOS
+            goos: darwin
+            goarch: arm64
+
+    name: Build on ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+
+    env:
+      IS_LINUX: ${{ matrix.platform == 'linux' }}
+      IS_WINDOWS: ${{ matrix.platform == 'windows' }}
+      IS_MAC: ${{ matrix.platform == 'macOS' }}
+      IS_GITHUB_PUSH_EVENT: ${{ github.event_name == 'push' }}
+      IS_GITHUB_WORKFLOW_DISPATCH_EVENT: ${{ github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Wails v3 CLI
+        run: |
+          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+        shell: bash
+
+      # ----- Linux Dependencies -----
+      - name: Install Linux dependencies
+        if: *is_linux
+        run: |
+          sudo apt-get update
+          UBUNTU_VERSION=$(lsb_release -rs | cut -d. -f1)
+
+          if [ "$UBUNTU_VERSION" -ge "24" ]; then
+            echo "Detected Ubuntu 24.04+"
+            sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
+            echo "USE_GTK3=false" >> $GITHUB_ENV
+          else
+            echo "Detected older Ubuntu"
+            sudo apt-get install -y build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+            echo "USE_GTK3=true" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      # ----- Windows Dependencies -----
+      - name: Install Windows build tools
+        if: *is_windows
+        run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+          scoop bucket add extras
+          scoop install nsis
+          Add-Content $env:GITHUB_PATH "$env:USERPROFILE\scoop\shims"
+
+          wails3 task windows:install:msix:tools
+        shell: pwsh
+
+      # ----- Determine Version (from workflow_action input or tag) -----
+      - name: Set version variable
+        id: version
+        run: |
+          if [ "${IS_GITHUB_WORKFLOW_DISPATCH_EVENT}" = "true" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            [[ "$VERSION" != v* ]] && VERSION="v$VERSION"
+          elif [ "${IS_GITHUB_PUSH_EVENT}" = "true" ]; then
+            VERSION=${GITHUB_REF_NAME}
+          else
+            VERSION="pr-${GITHUB_SHA:0:8}"
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # ----- Inject version into wails.json (Windows only) -----
+      - name: Inject version for Windows build
+        if: *is_windows
+        run: |
+          if [[ "$VERSION" =~ ^pr- ]]; then
+            WINDOWS_VERSION="0.0.0.0"
+          else
+            WINDOWS_VERSION="${VERSION#v}.0"
+          fi
+          jq --arg v "$WINDOWS_VERSION" '.Info.productVersion = $v' wails.json > tmp.json && mv tmp.json wails.json
+        shell: bash
+
+      # ----- Build Step -----
+      - name: Build App
+        run: |
+          if [ "${IS_WINDOWS}" = "true" ]; then
+            wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+          elif [ "${IS_LINUX}" = "true" ]; then
+            if [ "${USE_GTK3}" = "true" ]; then
+              wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} -tags gtk3
+            else
+              wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+            fi
+          elif [ "${IS_MAC}" = "true" ]; then
+            wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+          fi
+        shell: bash
+
+      # ----- Windows Packaging -----
+      - name: Create Windows installers
+        if: *is_windows
+        run: |
+          mkdir staging -Force
+
+          # Build NSIS installer (default format)
+          wails3 task windows:package
+          Copy-Item build/windows/nsis/*-installer.exe staging/ -ErrorAction SilentlyContinue
+
+          # Build unsigned MSIX package
+          wails3 task windows:package FORMAT=msix
+          Copy-Item bin/*.msix staging/ -ErrorAction SilentlyContinue
+
+        shell: pwsh
+
+      # ----- Linux Packaging (DEB, RPM, AppImage, Arch) -----
+      - name: Create Linux packages
+        if: *is_linux
+        run: |
+          wails3 task linux:package
+          mkdir -p staging
+          cp bin/*.deb bin/*.rpm bin/*.AppImage bin/*.pkg.tar.zst staging/ 2>/dev/null || true
+          cp build/bin/${APP_NAME} staging/
+        shell: bash
+
+      # ----- macOS Packaging (DMG) -----
+      - name: Create macOS DMG
+        if: *is_mac
+        run: |
+          wails3 task darwin:package:dmg
+          mkdir -p staging
+          cp -R build/bin/${APP_NAME}.app staging/
+          cp *.dmg staging/${APP_NAME}_${VERSION}_universal.dmg 2>/dev/null || true
+        shell: bash
+
+      # ----- Upload Artifacts -----
+      - name: Upload Windows artifacts
+        if: *is_windows
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-artifact
+          path: staging/
+
+      - name: Upload Linux artifacts
+        if: *is_linux
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-artifact
+          path: staging/
+
+      - name: Upload macOS artifacts
+        if: *is_mac
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-artifact
+          path: staging/
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    if: *is_github_release_trigger_event
+    runs-on: ubuntu-latest
+
+    env:
+      IS_GITHUB_PUSH_EVENT: ${{ github.event_name == 'push' }}
+      IS_GITHUB_WORKFLOW_DISPATCH_EVENT: ${{ github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ "${IS_GITHUB_WORKFLOW_DISPATCH_EVENT}" = "true" ]; then
+            TAG="${{ github.event.inputs.version }}"
+            [[ "$TAG" != v* ]] && TAG="v$TAG"
+          else
+            TAG="${{ github.ref_name }}"
+          fi
+          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          name: ${{ steps.tag.outputs.TAG }}
+          files: release-assets/*
+          generate_release_notes: true
