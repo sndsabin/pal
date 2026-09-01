@@ -18,8 +18,8 @@ import (
 var dbFS []byte
 
 type App struct {
-	Logger                 *logging.Logger
 	db                     *sql.DB
+	Logger                 *logging.Logger
 	LocationService        *services.LocationService
 	UserPreferenceService  *services.UserPreferenceService
 	ApplicationInfoService *services.ApplicationInfoService
@@ -71,8 +71,8 @@ func New(appName string, appVersion string) (*App, error) {
 	applicationInfoService := services.NewApplicationInfoService(appName, appVersion)
 
 	return &App{
-		Logger:                 logger,
 		db:                     db,
+		Logger:                 logger,
 		LocationService:        locationService,
 		UserPreferenceService:  userPreferenceService,
 		ApplicationInfoService: applicationInfoService,
