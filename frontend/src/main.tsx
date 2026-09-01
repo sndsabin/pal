@@ -8,7 +8,7 @@ import App from "./App";
 import Add from "./pages/Add";
 import Home from "./pages/Home";
 import Setting from "./pages/Setting";
-import RouterErrorPage from "./pages/RouterErrrorPage";
+import RouterErrorPage from "./pages/RouterErrorPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const router = createHashRouter([

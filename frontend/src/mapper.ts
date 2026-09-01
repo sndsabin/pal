@@ -3,7 +3,7 @@ import { LocationPayload, LocationSearchResult, UserLocation } from "./types";
 
 export function locationSearchResultToLocationPayload(data: LocationSearchResult) {
   if (!data.timezone_id || !data.timezone) {
-    throw new Error("timzone_id or timezone is missing");
+    throw new Error("timezone_id or timezone is missing");
   }
 
   const location: LocationPayload = {
