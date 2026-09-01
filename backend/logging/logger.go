@@ -15,7 +15,7 @@ type Logger struct {
 }
 
 const (
-	file         = "app.log"
+	fileName     = "app.log"
 	filePermMode = 0644
 )
 
@@ -24,7 +24,7 @@ func New(logDir string) (*Logger, error) {
 		return nil, errors.New("log dir cannot be empty")
 	}
 
-	path := filepath.Join(logDir, file)
+	path := filepath.Join(logDir, fileName)
 
 	file, err := os.OpenFile(
 		path,
