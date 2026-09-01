@@ -145,7 +145,8 @@ jobs:
 
       # ----- Install yq -----
       - name: Install yq (YAML processor)
-        uses: mikefarah/yq@v4
+        run: go install github.com/mikefarah/yq/v4@latest
+        shell: bash
 
       # ----- Update buid/config version -----
       - name: Update version in build/config.yml
