@@ -162,17 +162,42 @@ jobs:
         shell: bash
 
       # ----- Windows Packaging -----
+      - name: Create MSIX config file
+        if: matrix.platform == 'windows'
+        run: |
+          if [[ "$VERSION" =~ ^pr- ]]; then
+            VERSION_CLEAN="0.0.0"
+          else
+            VERSION_CLEAN="${VERSION#v}"
+          fi
+
+          cat > msix-config.yml << EOF
+          info:
+            productName: "${APP_NAME}"
+            companyName: "sndsabin"
+            version: "${VERSION_CLEAN}"
+          EOF
+        shell: bash
+
       - name: Create Windows installers
         if: *is_windows
         run: |
           mkdir staging -Force
+          mkdir bin -Force   # Ensure bin exists for MSIX output
 
           # Build NSIS installer (default format)
           wails3 task windows:package
           Copy-Item build/windows/nsis/*-installer.exe staging/ -ErrorAction SilentlyContinue
 
           # Build unsigned MSIX package
-          wails3 task windows:package FORMAT=msix
+          wails3 tool msix `
+          --config msix-config.yml `
+          --name "$env:APP_NAME" `
+          --executable "build/bin/$env:APP_NAME.exe" `
+          --arch "amd64" `
+          --out "bin/$env:APP_NAME-amd64.msix" `
+          --use-msix-tool
+
           Copy-Item bin/*.msix staging/ -ErrorAction SilentlyContinue
 
         shell: pwsh

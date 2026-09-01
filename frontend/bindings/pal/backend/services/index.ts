@@ -3,11 +3,6 @@
 
 import * as LocationService from "./locationservice.js";
 import * as UserPreferenceService from "./userpreferenceservice.js";
-export {
-    LocationService,
-    UserPreferenceService
-};
+export { LocationService, UserPreferenceService };
 
-export type {
-    LocationPayload
-} from "./models.js";
+export type { LocationPayload } from "./models.js";

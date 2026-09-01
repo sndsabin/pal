@@ -14,25 +14,28 @@ import * as models$0 from "../database/models/models.js";
 import * as $models from "./models.js";
 
 export function AddTrackedLocation(location: $models.LocationPayload): $CancellablePromise<void> {
-    return $Call.ByID(4197385228, location);
+  return $Call.ByID(4197385228, location);
 }
 
 export function DeleteTrackedLocation(id: number): $CancellablePromise<void> {
-    return $Call.ByID(3887965460, id);
+  return $Call.ByID(3887965460, id);
 }
 
 export function GetHomeLocation(): $CancellablePromise<models$0.UserLocation> {
-    return $Call.ByID(2858098212);
+  return $Call.ByID(2858098212);
 }
 
 export function GetTrackedLocation(): $CancellablePromise<models$0.UserLocation[] | null> {
-    return $Call.ByID(2400967417);
+  return $Call.ByID(2400967417);
 }
 
-export function SearchLocation(name: string, limit: number): $CancellablePromise<models$0.LocationSearchResult[] | null> {
-    return $Call.ByID(2046908579, name, limit);
+export function SearchLocation(
+  name: string,
+  limit: number,
+): $CancellablePromise<models$0.LocationSearchResult[] | null> {
+  return $Call.ByID(2046908579, name, limit);
 }
 
 export function UpsertHomeLocation(location: $models.LocationPayload): $CancellablePromise<void> {
-    return $Call.ByID(826004439, location);
+  return $Call.ByID(826004439, location);
 }
