@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
-Name=My Product
-Comment=A pal application
+Name=Pal
+Comment=Pal is a simple system tray app for keeping track of time across the world.
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/pal %u
 Terminal=false

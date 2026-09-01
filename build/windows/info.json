@@ -6,10 +6,9 @@
 		"0000": {
 			"ProductVersion": "0.1.0",
 			"CompanyName": "sndsabin",
-			"FileDescription": "A pal application",
+			"FileDescription": "Pal is a simple system tray app for keeping track of time across the world.",
 			"LegalCopyright": "© 2026, sndsabin",
-			"ProductName": "My Product",
-			"Comments": "This is a comment"
+			"ProductName": "pal"
 		}
 	}
 }
