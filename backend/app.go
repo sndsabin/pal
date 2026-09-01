@@ -19,7 +19,6 @@ var dbFS []byte
 type App struct {
 	Logger                 *logging.Logger
 	LocationService        *services.LocationService
-	DateTimeService        *services.DateTimeService
 	UserPreferenceService  *services.UserPreferenceService
 	ApplicationInfoService *services.ApplicationInfoService
 }
@@ -61,8 +60,6 @@ func New(appName string, appVersion string) (*App, error) {
 	userPreferenceRepo := repositories.NewUserPreferenceRepository(db)
 
 	// initialize services
-
-	dateTimeService := services.NewDateTimeService(logger)
 	userPreferenceService := services.NewUserService(logger, *userPreferenceRepo)
 	locationService := services.NewLocationService(
 		logger,
@@ -74,7 +71,6 @@ func New(appName string, appVersion string) (*App, error) {
 	return &App{
 		Logger:                 logger,
 		LocationService:        locationService,
-		DateTimeService:        dateTimeService,
 		UserPreferenceService:  userPreferenceService,
 		ApplicationInfoService: applicationInfoService,
 	}, nil

@@ -84,7 +84,6 @@ func main() {
 		Description: AppDescription,
 		Services: []application.Service{
 			application.NewService(backendApp.LocationService),
-			application.NewService(backendApp.DateTimeService),
 			application.NewService(backendApp.UserPreferenceService),
 			application.NewService(backendApp.ApplicationInfoService),
 		},
