@@ -5,10 +5,14 @@
 // @ts-ignore: Unused imports
 import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wailsio/runtime";
 
-export function ConvertDateTime(datetime: string, fromTz: string, toTz: string): $CancellablePromise<string> {
-    return $Call.ByID(1830975100, datetime, fromTz, toTz);
+export function ConvertDateTime(
+  datetime: string,
+  fromTz: string,
+  toTz: string,
+): $CancellablePromise<string> {
+  return $Call.ByID(1830975100, datetime, fromTz, toTz);
 }
 
 export function GetCurrentDateTime(timezone: string): $CancellablePromise<string> {
-    return $Call.ByID(2944907530, timezone);
+  return $Call.ByID(2944907530, timezone);
 }

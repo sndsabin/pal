@@ -10,9 +10,9 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 import * as models$0 from "../database/models/models.js";
 
 export function GetTimeFormat(): $CancellablePromise<models$0.TimeFormat> {
-    return $Call.ByID(3395987181);
+  return $Call.ByID(3395987181);
 }
 
 export function UpdateTimeFormat(timeFormat: string): $CancellablePromise<void> {
-    return $Call.ByID(783690602, timeFormat);
+  return $Call.ByID(783690602, timeFormat);
 }

@@ -4,12 +4,6 @@
 import * as DateTimeService from "./datetimeservice.js";
 import * as LocationService from "./locationservice.js";
 import * as UserPreferenceService from "./userpreferenceservice.js";
-export {
-    DateTimeService,
-    LocationService,
-    UserPreferenceService
-};
+export { DateTimeService, LocationService, UserPreferenceService };
 
-export type {
-    LocationPayload
-} from "./models.js";
+export type { LocationPayload } from "./models.js";

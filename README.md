@@ -6,7 +6,7 @@
 
 pal (पल), meaning “a moment in time.” Pronounced simply “pal.”
 
-Pal is a simple, lightweight system tray app for keeping track of time across the world.
+Pal is a simple system tray app for keeping track of time across the world.
 
 Add the cities and locations that matter to you and see their local times at a glance. Pal also makes it easy to answer everyday time-zone questions:
 
