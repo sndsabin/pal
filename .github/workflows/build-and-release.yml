@@ -77,11 +77,17 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       # ----- Linux Dependencies -----
+      - name: Detect Ubuntu version
+        if: *is_linux
+        run: |
+          UBUNTU_VERSION=$(lsb_release -rs | cut -d. -f1)
+          echo "UBUNTU_VERSION=${UBUNTU_VERSION}" >> $GITHUB_ENV
+        shell: bash
+
       - name: Install Linux dependencies
         if: *is_linux
         run: |
           sudo apt-get update
-          UBUNTU_VERSION=$(lsb_release -rs | cut -d. -f1)
 
           if [ "$UBUNTU_VERSION" -ge "24" ]; then
             echo "Detected Ubuntu 24.04+"
@@ -106,7 +112,7 @@ jobs:
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
           scoop bucket add extras
-          scoop install nsis
+          scoop install nsis gcc
           Add-Content $env:GITHUB_PATH "$env:USERPROFILE\scoop\shims"
 
         shell: pwsh
@@ -168,16 +174,15 @@ jobs:
       # ----- Build Step -----
       - name: Build App
         run: |
-          if [ "${{ matrix.platform }}" = "windows" ]; then
-            wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
-          elif [ "${{ matrix.platform }}" = "linux" ]; then
-            UBUNTU_VERSION=$(lsb_release -rs | cut -d. -f1)
+          if [ "${IS_WINDOWS}" = "true" ]; then
+            CGO_ENABLED=1 wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+          elif [ "${IS_LINUX}" = "true" ]; then
             if [ "$UBUNTU_VERSION" -lt "24" ]; then
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} -tags gtk3
             else
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
             fi
-          elif [ "${{ matrix.platform }}" = "macOS" ]; then
+          elif [ "${IS_MAC}" = "true" ]; then
             wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
           fi
         shell: bash
