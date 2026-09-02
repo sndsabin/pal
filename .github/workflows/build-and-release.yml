@@ -174,6 +174,8 @@ jobs:
       # ----- Build Step -----
       - name: Build App
         run: |
+          rm -rf bin/   # clean builds if any
+
           if [ "${IS_WINDOWS}" = "true" ]; then
             CGO_ENABLED=1 wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
           elif [ "${IS_LINUX}" = "true" ]; then
@@ -183,7 +185,7 @@ jobs:
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
             fi
           elif [ "${IS_MAC}" = "true" ]; then
-            wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+            wails3 task darwin:package:universal
           fi
         shell: bash
 
