@@ -177,7 +177,7 @@ jobs:
           rm -rf bin/   # clean builds if any
 
           if [ "${IS_WINDOWS}" = "true" ]; then
-            wails3 task windows:build CGO_ENABLED=1
+            wails3 task windows:build
           elif [ "${IS_LINUX}" = "true" ]; then
             if [ "$UBUNTU_VERSION" -lt "24" ]; then
               wails3 build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} -tags gtk3
