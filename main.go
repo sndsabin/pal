@@ -14,7 +14,6 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
-	"github.com/wailsapp/wails/v3/pkg/icons"
 )
 
 const (
@@ -30,6 +29,9 @@ var icon []byte
 
 //go:embed assets/icons/icon-dark.png
 var iconDark []byte
+
+//go:embed assets/icons/mac-icon-template.png
+var macIconTemplate []byte
 
 //go:embed all:frontend/dist
 var assets embed.FS
@@ -119,7 +121,7 @@ func main() {
 
 	// Use the template icon on macOS so the icon respects light/dark modes.
 	if runtime.GOOS == "darwin" {
-		systemTray.SetTemplateIcon(icons.SystrayMacTemplate)
+		systemTray.SetTemplateIcon(macIconTemplate)
 	}
 
 	/**
