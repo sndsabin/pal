@@ -116,7 +116,6 @@ func main() {
 
 	systemTray.SetIcon(icon)
 	systemTray.SetDarkModeIcon(iconDark)
-	systemTray.SetLabel(AppName)
 	systemTray.SetTooltip(AppName)
 
 	// Use the template icon on macOS so the icon respects light/dark modes.
