@@ -206,10 +206,10 @@ jobs:
         run: |
           wails3 task linux:package
           mkdir -p staging
-          cp bin/${APP_NAME}.deb staging/${APP_NAME}_${VERSION}.deb
-          cp bin/${APP_NAME}.rpm staging/${APP_NAME}_${VERSION}.rpm
+          cp bin/${APP_NAME}.deb staging/${APP_NAME}_${VERSION}_amd64.deb
+          cp bin/${APP_NAME}.rpm staging/${APP_NAME}_${VERSION}_amd64.rpm
           cp bin/${APP_NAME}-x86_64.AppImage staging/${APP_NAME}_${VERSION}-x86_64.AppImage
-          cp bin/${APP_NAME}.pkg.tar.zst staging/${APP_NAME}_${VERSION}.pkg.tar.zst
+          cp bin/${APP_NAME}.pkg.tar.zst staging/${APP_NAME}_${VERSION}_amd64.pkg.tar.zst
         shell: bash
 
       # ----- macOS Packaging (DMG) -----
