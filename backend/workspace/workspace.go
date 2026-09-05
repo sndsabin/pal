@@ -20,9 +20,9 @@ type WorkspaceDirs struct {
 
 const (
 	dbDirName    string      = "db"
-	logsDirName  string      = "logs"
-	dirPermMode  os.FileMode = 0755
-	filePermMode os.FileMode = 0644
+	LogsDirName  string      = "logs"
+	DirPermMode  os.FileMode = 0755
+	FilePermMode os.FileMode = 0644
 )
 
 func New(appName string) (*Workspace, error) {
@@ -38,10 +38,10 @@ func New(appName string) (*Workspace, error) {
 	// create necessary directories
 	rootDir := filepath.Join(userConfigDir, appName)
 	dbDir := filepath.Join(rootDir, dbDirName)
-	logsDir := filepath.Join(rootDir, logsDirName)
+	logsDir := filepath.Join(rootDir, LogsDirName)
 
 	for _, dir := range []string{rootDir, dbDir, logsDir} {
-		err := os.MkdirAll(dir, dirPermMode)
+		err := os.MkdirAll(dir, DirPermMode)
 		if err != nil {
 			return nil, fmt.Errorf("error creating directory %q: %w", dir, err)
 		}
@@ -67,7 +67,7 @@ func (w *Workspace) SyncEmbeddedDb(db []byte, appName string) error {
 		return nil
 	}
 
-	err := os.WriteFile(dbFile, db, filePermMode)
+	err := os.WriteFile(dbFile, db, FilePermMode)
 	if err != nil {
 		return err
 	}

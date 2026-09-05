@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 	"pal/backend"
+	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"log"
 
@@ -163,8 +163,14 @@ func initCrashLog() {
 		dir = os.TempDir()
 	}
 
-	path := filepath.Join(dir, strings.ToLower(AppName)+"-startup-error.log")
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	logsDir := filepath.Join(dir, AppName, workspace.LogsDirName)
+	err = os.MkdirAll(logsDir, workspace.DirPermMode)
+	if err != nil {
+		return
+	}
+
+	filePath := filepath.Join(dir, "startup-error.log")
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, workspace.FilePermMode)
 	if err != nil {
 		return
 	}
