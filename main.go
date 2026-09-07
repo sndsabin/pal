@@ -22,7 +22,7 @@ import (
 
 const (
 	AppName         = "pal"
-	AppVersion      = "0.0.3"
+	AppVersion      = "0.0.4"
 	AppDescription  = "A system tray app for staying in sync with moments across the world."
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
