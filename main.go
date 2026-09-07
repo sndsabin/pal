@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"fmt"
 	"os"
 	"pal/backend"
+	"pal/backend/logging"
 	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
@@ -14,6 +16,8 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
+	"github.com/wailsapp/wails/v3/pkg/updater"
+	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
 
 const (
@@ -22,6 +26,7 @@ const (
 	AppDescription  = "A system tray app for staying in sync with moments across the world."
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
+	repository      = "https://github.com/sndsabin/pal"
 )
 
 //go:embed assets/icons/icon.png
@@ -137,7 +142,14 @@ func main() {
 	*
 	 */
 	menu := app.NewMenu()
-	menu.Add("Quit").OnClick(func(data *application.Context) {
+	menu.Add("Check for updates").OnClick(func(_ *application.Context) {
+		go func() {
+			if err := app.Updater.CheckAndInstall(context.Background()); err != nil {
+				backendApp.Logger.Error("error updating app: %w", err)
+			}
+		}()
+	})
+	menu.Add("Quit").OnClick(func(_ *application.Context) {
 		app.Quit()
 	})
 
@@ -148,12 +160,33 @@ func main() {
 	systemTray.AttachWindow(window)
 	systemTray.WindowOffset(5) // doesn't work on wayland
 
+	// configure updater
+	configureAppUpdater(app, backendApp.Logger)
+
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func configureAppUpdater(app *application.App, logger *logging.Logger) {
+	gh, err := github.New(github.Config{
+		Repository:    repository,
+		ChecksumAsset: "SHA256SUMS",
+	})
+	if err != nil {
+		logger.Error("error initializing github update provider :%w", err)
+	}
+
+	err = app.Updater.Init(updater.Config{
+		CurrentVersion: AppVersion,
+		Providers:      []updater.Provider{gh},
+	})
+	if err != nil {
+		logger.Error("error updating app: %w", err)
 	}
 }
 
