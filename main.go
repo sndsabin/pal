@@ -188,7 +188,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		Providers:      []updater.Provider{gh},
 	})
 	if err != nil {
-		logger.Error("error updating app: ", "err", err)
+		logger.Error("error initializing app updater: ", "err", err)
 	}
 }
 
