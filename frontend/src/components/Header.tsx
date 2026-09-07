@@ -32,7 +32,7 @@ const Header = ({ homeLocation }: Props) => {
             </div>
 
             <div className="mt-1 text-[12px] leading-none text-blue-200/70">
-              <span>{homeLocation.countryFlag}</span>
+              <span className="font-flags">{homeLocation.countryFlag}</span>
               <span className="ml-1.5">{homeLocation.name}</span>
             </div>
           </>

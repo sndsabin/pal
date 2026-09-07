@@ -10,6 +10,9 @@ import Home from "./pages/Home";
 import Setting from "./pages/Setting";
 import RouterErrorPage from "./pages/RouterErrorPage";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
+
+polyfillCountryFlagEmojis();
 
 const router = createHashRouter([
   {

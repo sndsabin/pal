@@ -14,8 +14,11 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@wailsio/runtime": "latest",
+    "country-flag-emoji-polyfill": "^0.1.10",
+    "install": "^0.13.0",
     "lucide-react": "^1.34.0",
     "luxon": "^3.7.2",
+    "npm": "^12.0.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.3",

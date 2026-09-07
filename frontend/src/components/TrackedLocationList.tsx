@@ -26,7 +26,7 @@ const TrackedLocationsList = ({ locations, onDelete }: Props) => {
         return (
           <div key={location.id} className="group flex items-center justify-between py-3.5">
             <div className="flex items-center space-x-3">
-              <span className="text-2xl select-none"> {location.countryFlag} </span>{" "}
+              <span className="font-flags text-2xl select-none"> {location.countryFlag} </span>{" "}
               <div className="flex flex-col">
                 <div className="flex items-center space-x-2">
                   <span className="text-base font-normal tracking-wide text-white/80">

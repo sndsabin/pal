@@ -86,7 +86,7 @@ const TimeConverter = ({ locationSelectOptions, homeLocation }: Props) => {
               <select
                 value={selectedTimezone}
                 onChange={(e) => setSelectedTimezone(e.target.value)}
-                className="w-full cursor-pointer bg-transparent text-sm font-medium text-white/80 [color-scheme:dark] focus:outline-none"
+                className="font-flags w-full cursor-pointer bg-transparent text-sm font-medium text-white/80 [color-scheme:dark] focus:outline-none"
               >
                 {locationSelectOptions.map((location: TrackedLocationSelectOption, index) => (
                   <option
@@ -117,7 +117,7 @@ const TimeConverter = ({ locationSelectOptions, homeLocation }: Props) => {
 
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-[#060812] px-3.5 py-3">
             <div className="flex items-center space-x-2">
-              <span className="text-lg">{homeLocation.countryFlag}</span>
+              <span className="font-flags text-lg">{homeLocation.countryFlag}</span>
 
               <span className="text-sm font-medium text-white/80">{homeLocation.name}</span>
             </div>

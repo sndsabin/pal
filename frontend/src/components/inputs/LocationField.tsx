@@ -129,7 +129,7 @@ const LocationField = ({
                         isHighlighted ? "bg-white/[0.08]" : "hover:bg-white/[0.05]"
                       }`}
                     >
-                      <div className="mr-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05]">
+                      <div className="font-flags mr-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05]">
                         {location.type === LocationType.SearchTypeCountry ? (
                           <span className="text-lg">{location.country_flag}</span>
                         ) : (
@@ -168,7 +168,7 @@ const LocationField = ({
           }`}
         >
           <div className="flex items-center">
-            <span className="mr-3 text-2xl">{selectedLocation.country_flag}</span>
+            <span className="font-flags mr-3 text-2xl">{selectedLocation.country_flag}</span>
 
             <div className="min-w-0">
               <div className="text-sm font-medium text-white">{selectedLocation.name}</div>
