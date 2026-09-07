@@ -262,7 +262,7 @@ jobs:
 
       - name: Generate SHA256SUMS
         working-directory: release-assets
-        run: shasum -a 256 * > SHA256SUMS
+        run: sha256sum * > SHA256SUMS
 
       - name: Determine release tag
         id: tag
