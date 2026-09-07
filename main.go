@@ -178,7 +178,8 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		ChecksumAsset: "SHA256SUMS",
 	})
 	if err != nil {
-		logger.Error("error initializing github update provider :%w", err)
+		logger.Error("error initializing github update provider: ", "err", err)
+		return
 	}
 
 	err = app.Updater.Init(updater.Config{
@@ -186,7 +187,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		Providers:      []updater.Provider{gh},
 	})
 	if err != nil {
-		logger.Error("error updating app: %w", err)
+		logger.Error("error updating app: ", "err", err)
 	}
 }
 
