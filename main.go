@@ -149,6 +149,7 @@ func main() {
 			}
 		}()
 	})
+	menu.AddSeparator()
 	menu.Add("Quit").OnClick(func(_ *application.Context) {
 		app.Quit()
 	})
