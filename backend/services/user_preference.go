@@ -42,7 +42,7 @@ func (up *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
 
 	err = up.userPreferenceRepository.Update(*userPreference)
 	if err != nil {
-		up.logger.Error("error updating user preference: " + err.Error())
+		up.logger.Error("error updating user preference: ", "err", err)
 
 		return errors.New("error saving preference")
 	}
@@ -54,7 +54,7 @@ func (up *UserPreferenceService) getUserPreference() (*models.UserPreference, er
 	// user preference table has only one row as of now.
 	userPreference, err := up.userPreferenceRepository.GetById(1)
 	if err != nil {
-		up.logger.Error("error fetching user preference: " + err.Error())
+		up.logger.Error("error fetching user preference: ", "err", err)
 
 		return nil, errors.New("error fetching user preference.")
 	}
