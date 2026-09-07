@@ -260,6 +260,10 @@ jobs:
           path: release-assets
           merge-multiple: true
 
+      - name: Generate SHA256SUMS
+        working-directory: release-assets
+        run: sha256sum * > SHA256SUMS
+
       - name: Determine release tag
         id: tag
         run: |
