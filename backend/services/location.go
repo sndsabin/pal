@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"pal/backend/database/models"
 	"pal/backend/database/repositories"
 	"pal/backend/logging"
@@ -40,7 +39,7 @@ func NewLocationService(
 
 func (l *LocationService) SearchLocation(name string, limit int) ([]models.LocationSearchResult, error) {
 	if name == "" {
-		return []models.LocationSearchResult{}, fmt.Errorf("name cannot be empty")
+		return []models.LocationSearchResult{}, errors.New("name cannot be empty")
 	}
 
 	result, err := l.locationSearchRepository.FindLocation(name, limit)

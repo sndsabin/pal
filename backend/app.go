@@ -45,7 +45,7 @@ func New(appName string, appVersion string) (*App, error) {
 	// sync embedded db to disk
 	err = workspace.SyncEmbeddedDb(dbFS, appName)
 	if err != nil {
-		return nil, fmt.Errorf("error syncing resources: ", "err", err)
+		return nil, fmt.Errorf("error syncing resources: %w", err)
 	}
 
 	// connect to database
@@ -53,7 +53,7 @@ func New(appName string, appVersion string) (*App, error) {
 	dbPath := filepath.Join(workspace.Dirs.Db, dbName)
 	db, err := database.Open(dbPath)
 	if err != nil {
-		return nil, fmt.Errorf("error connection database: ", "err", err)
+		return nil, fmt.Errorf("error connection database: %w", err)
 	}
 
 	// initialize repositories

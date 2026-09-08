@@ -32,7 +32,7 @@ func New(logDir string) (*Logger, error) {
 		filePermMode,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("error creating log file: ", "err", err)
+		return nil, fmt.Errorf("error creating log file: %w", err)
 	}
 
 	logger := slog.New(slog.NewTextHandler(
