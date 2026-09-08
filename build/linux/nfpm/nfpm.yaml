@@ -3,7 +3,7 @@
 #
 # The lines below are called `modelines`. See `:help modeline`
 
-name: "pal"
+name: "pal-tray"
 arch: ${GOARCH}
 platform: "linux"
 version: "0.0.1"
