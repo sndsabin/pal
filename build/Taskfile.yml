@@ -235,6 +235,9 @@ tasks:
     dir: build
     cmds:
       - wails3 update build-assets -name "{{.APP_NAME}}" -binaryname "{{.APP_NAME}}" -config config.yml -dir .
+       # @TODO: Temporary fix to update the dpkg package name
+      - 'sed -i ''s/^name: "pal"$/name: "pal-tray"/'' linux/nfpm/nfpm.yaml'
+      - 'sed -i ''s|^homepage: "https://wails.io"$|homepage: "https://sndsabin.github.io/pal/"|'' linux/nfpm/nfpm.yaml'
 
   build:server:
     summary: Builds the application in server mode (no GUI, HTTP server only)
