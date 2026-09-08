@@ -11,6 +11,7 @@ import (
 	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"log"
 
@@ -177,6 +178,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 	gh, err := github.New(github.Config{
 		Repository:    repository,
 		ChecksumAsset: "SHA256SUMS",
+		AssetMatcher:  assetMatcher,
 	})
 	if err != nil {
 		logger.Error("error initializing github update provider: ", "err", err)
@@ -190,6 +192,31 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 	if err != nil {
 		logger.Error("error initializing app updater: ", "err", err)
 	}
+}
+
+func assetMatcher(req updater.CheckRequest, assets []github.ReleaseAsset) int {
+	platform := strings.ToLower(req.Platform)
+
+	var suffix string
+
+	switch platform {
+	case "windows":
+		suffix = "_installer.exe"
+	case "darwin":
+		suffix = ".dmg"
+	case "linux":
+		suffix = ".AppImage"
+	default:
+		return -1
+	}
+
+	for i, asset := range assets {
+		if strings.HasSuffix(strings.ToLower(asset.Name), suffix) {
+			return i
+		}
+	}
+
+	return -1
 }
 
 func initCrashLog() {
