@@ -26,7 +26,7 @@ const (
 	AppDescription  = "A system tray app for staying in sync with moments across the world."
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
-	repository      = "https://github.com/sndsabin/pal"
+	repository      = "sndsabin/pal"
 )
 
 //go:embed assets/icons/icon.png
