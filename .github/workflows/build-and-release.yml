@@ -163,7 +163,8 @@ jobs:
             VERSION_CLEAN="${VERSION#v}"
           fi
 
-          yq eval ".info.version = \"$VERSION_CLEAN\"" build/config.yml > tmp.yml && mv tmp.yml build/config.yml
+          yq eval ".info.version = \"$VERSION_CLEAN\"" build/config.yml > config.tmp.yml && mv config.tmp.yml build/config.yml
+          yq eval ".info.version = \"$VERSION_CLEAN\"" build/windows/msix-config.yml > msix-config.tmp.yml && mv msix-config.tmp.yml build/config.yml
         shell: bash
 
       # ----- Regnerate build assets -----
@@ -190,7 +191,7 @@ jobs:
         shell: bash
 
       # ----- Windows Packaging -----
-      - name: Create Windows installers
+      - name: Create Windows packages
         if: *is_windows
         run: |
           mkdir -p staging
@@ -198,6 +199,10 @@ jobs:
           # Build NSIS installer (default format)
           wails3 task windows:package
           cp bin/${APP_NAME}-amd64-installer.exe staging/${APP_NAME}_${VERSION}_amd64_installer.exe
+
+          # Build msix 
+          wails3 package GOOS=windows FORMAT=msix
+          cp bin/${APP_NAME}-amd64.msix staging/${APP_NAME}_${VERSION}_amd64.msix
         shell: bash
 
       # ----- Linux Packaging (DEB, RPM, AppImage, Arch) -----
