@@ -4,7 +4,7 @@ version: "3"
 # This information is used to generate the build assets.
 info:
   companyName: "sndsabin" # The name of the company
-  productName: "pal" # The name of the application
+  productName: "Pal — World Clock" # The name of the application
   productIdentifier: "sndsabin.PalWorldClock" # The unique product identifier
   description: "Pal is a simple system tray app for keeping track of time across the world." # The application description
   copyright: "(c) 2026, sndsabin" # Copyright text
