@@ -164,7 +164,7 @@ jobs:
           fi
 
           yq eval ".info.version = \"$VERSION_CLEAN\"" build/config.yml > config.tmp.yml && mv config.tmp.yml build/config.yml
-          yq eval ".info.version = \"$VERSION_CLEAN\"" build/windows/msix-config.yml > msix-config.tmp.yml && mv msix-config.tmp.yml build/config.yml
+          yq eval ".info.version = \"$VERSION_CLEAN\"" build/windows/msix-config.yml > msix-config.tmp.yml && mv msix-config.tmp.yml build/windows/msix-config.yml
         shell: bash
 
       # ----- Regnerate build assets -----
