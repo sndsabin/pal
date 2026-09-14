@@ -211,7 +211,7 @@ func assetMatcher(req updater.CheckRequest, assets []github.ReleaseAsset) int {
 	}
 
 	for i, asset := range assets {
-		if strings.HasSuffix(strings.ToLower(asset.Name), suffix) {
+		if strings.HasSuffix(strings.ToLower(asset.Name), strings.ToLower(suffix)) {
 			return i
 		}
 	}
