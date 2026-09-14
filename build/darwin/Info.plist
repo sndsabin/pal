@@ -11,7 +11,7 @@
 		<key>CFBundleIconName</key>
 		<string>appicon</string>
 		<key>CFBundleIdentifier</key>
-		<string>np.com.sabinb</string>
+		<string>np.com.sabinb.pal</string>
 		<key>CFBundleName</key>
 		<string>pal</string>
 		<key>CFBundlePackageType</key>
