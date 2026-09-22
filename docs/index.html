@@ -15,46 +15,35 @@
       rel="stylesheet"
     />
 
-    <style>
+    <style type="text/css">
       html {
         visibility: hidden;
+        scroll-behavior: smooth;
       }
-    </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+      @theme {
+        --font-serif: "Fraunces", serif;
+        --font-sans: "Inter", sans-serif;
 
-    <script>
-      requestAnimationFrame(() => {
-        document.documentElement.style.visibility = "visible";
-      });
+        --color-bg: #02040a;
+        --color-surface: #060917;
+      }
 
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              serif: ["Fraunces", "serif"],
-              sans: ["Inter", "sans-serif"],
-            },
-            colors: {
-              bg: "#02040a",
-              surface: "#060917",
-            },
-          },
-        },
-      };
-    </script>
-
-    <style>
       @media (prefers-reduced-motion: reduce) {
         * {
           transition: none !important;
         }
       }
-
-      html {
-        scroll-behavior: smooth;
-      }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <script type="text/javascript">
+      requestAnimationFrame(() => {
+        // only make it visible after tailwind loads
+        document.documentElement.style.visibility = "visible";
+      });
+    </script>
   </head>
 
   <body class="bg-bg text-white/75 font-sans antialiased">
