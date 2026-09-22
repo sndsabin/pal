@@ -15,9 +15,19 @@
       rel="stylesheet"
     />
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <script>
+      requestAnimationFrame(() => {
+        document.documentElement.style.visibility = "visible";
+      });
+
       tailwind.config = {
         theme: {
           extend: {
