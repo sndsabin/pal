@@ -234,13 +234,13 @@ jobs:
 
           mkdir -p $MSIX_DIR
           echo "Unpacking MSIX..."
-          "$MAKEAPPX" unpack /p $MSIX_INPUT /d $MSIX_DIR
+          MSYS_NO_PATHCONV=1 "$MAKEAPPX" unpack /p $MSIX_INPUT /d $MSIX_DIR
           echo "Replacing MSIX assets..."
           rm -rf $MSIX_DIR/Assets/*
           cp -R build/windows/msix/assets/* $MSIX_DIR/Assets/
 
           echo "Repackaging MSIX..."
-          "$MAKEAPPX" pack /d $MSIX_DIR /p $MSIX_INPUT /o
+          MSYS_NO_PATHCONV=1 "$MAKEAPPX" pack /d $MSIX_DIR /p $MSIX_INPUT /o
           rm -rf $MSIX_DIR
 
           cp bin/${APP_NAME}-amd64.msix staging/${APP_NAME}_${VERSION}_amd64.msix
