@@ -8,18 +8,20 @@ interface Props {
 const TIME_DELAY = 5000; //5s
 
 const ErrorCard = ({ message }: Props) => {
-  const [isVisible, setIsVisible] = useState(Boolean(message));
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    setIsVisible(true);
+
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, TIME_DELAY);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [message]);
 
   if (!isVisible) {
-    return;
+    return null;
   }
 
   return (
