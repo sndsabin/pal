@@ -202,6 +202,25 @@ jobs:
 
           # Build msix 
           wails3 package GOOS=windows FORMAT=msix
+
+          # Wails currently generates empty placeholder MSIX assets.
+          # and there is currently no way to override it.
+          # Unpack the generated package, replace its Assets directory
+          # with the project's custom MSIX assets, then repackage it.
+          MSIX_INPUT=bin/${APP_NAME}-amd64.msix
+          MSIX_DIR=${RUNNER_TEMP}/msix-package
+
+          mkdir -p $MSIX_DIR
+          echo "Unpacking MSIX..."
+          makeappx.exe unpack /p $MSIX_INPUT /d $MSIX_DIR
+          echo "Replacing MSIX assets..."
+          rm -rf $MSIX_DIR/Assets/*
+          cp -R build/windows/msix/assets/* $MSIX_DIR/Assets/
+
+          echo "Repackaging MSIX..."
+          makeappx.exe pack /d $MSIX_DIR /p $MSIX_INPUT /o
+          rm -rf $MSIX_DIR
+
           cp bin/${APP_NAME}-amd64.msix staging/${APP_NAME}_${VERSION}_amd64.msix
         shell: bash
 
