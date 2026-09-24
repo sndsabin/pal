@@ -191,6 +191,28 @@ jobs:
         shell: bash
 
       # ----- Windows Packaging -----
+      - name: Locate MakeAppx
+        if: *is_windows
+        run: |
+          # Wails locates MakeAppx directly from the Windows SDK instead of relying
+          # on it being available on PATH. Mirror that lookup here so the same
+          # MakeAppx executable can be used for unpacking and repackaging the MSIX.
+
+          $root = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $bin = Join-Path $root "Windows Kits\10\bin"
+
+          $makeAppx = Get-ChildItem "$bin\10.*\x64\MakeAppx.exe" |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+
+          if (-not $makeAppx) {
+            throw "MakeAppx.exe was not found in $bin"
+          }
+
+          "MAKEAPPX=$makeAppx" >> $env:GITHUB_ENV
+          Write-Host "Using MakeAppx: $makeAppx"
+        shell: pwsh
+
       - name: Create Windows packages
         if: *is_windows
         run: |
@@ -202,6 +224,25 @@ jobs:
 
           # Build msix 
           wails3 package GOOS=windows FORMAT=msix
+
+          # Wails currently generates empty placeholder MSIX assets.
+          # and there is currently no way to override it.
+          # Unpack the generated package, replace its Assets directory
+          # with the project's custom MSIX assets, then repackage it.
+          MSIX_INPUT=bin/${APP_NAME}-amd64.msix
+          MSIX_DIR=${RUNNER_TEMP}/msix-package
+
+          mkdir -p $MSIX_DIR
+          echo "Unpacking MSIX..."
+          MSYS_NO_PATHCONV=1 "$MAKEAPPX" unpack /p $MSIX_INPUT /d $MSIX_DIR
+          echo "Replacing MSIX assets..."
+          rm -rf $MSIX_DIR/Assets/*
+          cp -R build/windows/msix/assets/* $MSIX_DIR/Assets/
+
+          echo "Repackaging MSIX..."
+          MSYS_NO_PATHCONV=1 "$MAKEAPPX" pack /d $MSIX_DIR /p $MSIX_INPUT /o
+          rm -rf $MSIX_DIR
+
           cp bin/${APP_NAME}-amd64.msix staging/${APP_NAME}_${VERSION}_amd64.msix
         shell: bash
 
