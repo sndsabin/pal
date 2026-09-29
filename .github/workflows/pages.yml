@@ -33,7 +33,7 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/releases/latest \
           | jq '{
               version: .tag_name,
-              windows: first(.assets[] | select(.name | ascii_downcase | endswith(".exe")) | .browser_download_url),
+              windows: "https://apps.microsoft.com/detail/9pdqpbgn6d3t",
               linux: first(.assets[] | select(.name | ascii_downcase | endswith(".deb")) | .browser_download_url),
               mac: first(.assets[] | select(.name | ascii_downcase | endswith(".dmg")) | .browser_download_url)
             }' > ./docs/assets.json
