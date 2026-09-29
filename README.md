@@ -1,6 +1,14 @@
-<p align="center">
-  <img src="docs/logo.png" alt="Pal logo" width="150" />
+<p align="center"> 
+<img src="docs/logo.png" alt="Pal logo" width="150" />
 </p>
+
+<div align="center">
+<a href="https://apps.microsoft.com/detail/9pdqpbgn6d3t" target="_blank">
+  <img src="https://get.microsoft.com/images/en-us%20dark.svg"
+       width="200"
+       alt="Get it from Microsoft Store">
+</a>
+</div>
 
 # pal
 
@@ -22,7 +30,7 @@ Whether you work with people around the world, have friends and family in differ
 
 ### Installation
 
-1. Download the latest release of pal for your operating system.
+1. Download the latest [release](https://github.com/sndsabin/pal/releases) of pal for your operating system.
 2. Launch the application.
 3. Select a service, choose a version, and start it.
 
@@ -44,17 +52,6 @@ Whether you work with people around the world, have friends and family in differ
 > 4. Enter your system password or use Touch ID to confirm.
 >
 > **Official Apple Guide:** [Open a Mac app from an unidentified developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac)
->
-> ---
->
-> ### Windows (`.exe`)
->
-> Windows Defender SmartScreen may show a blue window stating _“Windows protected your PC.”_
->
-> **How to run:**
->
-> 1. Click the **"More info"** link inside the blue window.
-> 2. Click the **"Run anyway"** button that appears.
 
 ## Tech Stack
 
