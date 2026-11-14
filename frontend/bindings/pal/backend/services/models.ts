@@ -17,3 +17,14 @@ export interface LocationPayload {
     "country_flag": string;
     "timezone": string;
 }
+
+export interface UserPreferencePayload {
+    "TimeFormat": string;
+    "TemperatureFormat": string;
+    "AlertSound": boolean;
+}
+
+export interface WeatherPayload {
+    "LocationID": number;
+    "LocationIdentifier": string;
+}

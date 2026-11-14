@@ -8,6 +8,7 @@ import (
 	"os"
 	"pal/backend"
 	"pal/backend/logging"
+	"pal/backend/workers"
 	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
@@ -17,6 +18,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
+	"github.com/wailsapp/wails/v3/pkg/services/notifications"
 	"github.com/wailsapp/wails/v3/pkg/updater"
 	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
@@ -28,6 +30,7 @@ const (
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
 	repository      = "sndsabin/pal"
+	namespace       = "np.com.sabinb.pal"
 )
 
 //go:embed assets/icons/icon.png
@@ -81,7 +84,12 @@ func createWindow(app *application.App) *application.WebviewWindow {
 func main() {
 	initCrashLog()
 
-	backendApp, err := backend.New(AppName, AppVersion)
+	// Create before application.New so this one instance can be registered in Services:
+	// only registered services get ServiceStartup (D-Bus connection).
+	// @see https://github.com/wailsapp/wails/issues/4449
+	notifier := notifications.New()
+
+	backendApp, err := backend.New(AppName, AppVersion, notifier)
 	if err != nil {
 		log.Fatal("error initializing backend: ", err)
 	}
@@ -91,9 +99,13 @@ func main() {
 		Name:        AppName,
 		Description: AppDescription,
 		Services: []application.Service{
+			application.NewService(notifier),
 			application.NewService(backendApp.LocationService),
 			application.NewService(backendApp.UserPreferenceService),
 			application.NewService(backendApp.ApplicationInfoService),
+			application.NewService(backendApp.WeatherService),
+			application.NewService(backendApp.TimerService),
+			application.NewService(backendApp.NotificationService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -103,6 +115,9 @@ func main() {
 		},
 		Windows: application.WindowsOptions{
 			DisableQuitOnLastWindowClosed: true,
+		},
+		SingleInstance: &application.SingleInstanceOptions{
+			UniqueID: namespace,
 		},
 	})
 
@@ -165,6 +180,31 @@ func main() {
 	// configure updater
 	configureAppUpdater(app, backendApp.Logger)
 
+	app.Event.OnApplicationEvent(events.Common.ApplicationStarted, func(*application.ApplicationEvent) {
+		// refresh weather data of all users location periodically
+		go workers.RefreshWeatherDataPeriodically(app, backendApp.Logger, backendApp.WeatherService)
+
+		// track running timers
+		go workers.TrackRunningTimers(
+			app,
+			backendApp.Logger,
+			backendApp.TimerService,
+			backendApp.NotificationService,
+		)
+	})
+
+	notifier.OnNotificationResponse(func(result notifications.NotificationResult) {
+		if result.Error != nil {
+			log.Printf("notification response error: %v", result.Error)
+			return
+		}
+		if result.Response.ActionIdentifier != notifications.DefaultActionIdentifier {
+			return
+		}
+		window.Show()
+		window.Focus()
+	})
+
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()
 
@@ -181,7 +221,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		AssetMatcher:  assetMatcher,
 	})
 	if err != nil {
-		logger.Error("error initializing github update provider: ", "err", err)
+		logger.Error("error initializing github update provider", "err", err)
 		return
 	}
 
@@ -190,7 +230,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		Providers:      []updater.Provider{gh},
 	})
 	if err != nil {
-		logger.Error("error initializing app updater: ", "err", err)
+		logger.Error("error initializing app updater", "err", err)
 	}
 }
 

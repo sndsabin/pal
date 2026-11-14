@@ -5,10 +5,17 @@ export {
     LocationScope,
     LocationType,
     SearchType,
-    TimeFormat
+    TemperatureFormat,
+    TimeFormat,
+    TimerStatus
 } from "./models.js";
 
 export type {
+    CurrentWeather,
+    HourlyWeather,
     LocationSearchResult,
-    UserLocation
+    Timer,
+    UserLocation,
+    UserPreference,
+    WeatherData
 } from "./models.js";

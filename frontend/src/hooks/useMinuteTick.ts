@@ -34,7 +34,7 @@ const useMinuteTick = () => {
     startTicking();
 
     const unsubscribeWindowsShownEvent = api.onWindowsShown(startTicking);
-    const unsubscribeWindowsHiddenEvent = api.onWindowsShown(stopTicking);
+    const unsubscribeWindowsHiddenEvent = api.onWindowsHidden(stopTicking);
 
     return () => {
       unsubscribeWindowsShownEvent();

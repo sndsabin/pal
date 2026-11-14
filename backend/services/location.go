@@ -44,7 +44,7 @@ func (l *LocationService) SearchLocation(name string, limit int) ([]models.Locat
 
 	result, err := l.locationSearchRepository.FindLocation(name, limit)
 	if err != nil {
-		l.logger.Error("error finding location: ", "err", err)
+		l.logger.Error("error finding location", "name", name, "err", err)
 
 		return []models.LocationSearchResult{}, errors.New("error finding location")
 	}
@@ -90,7 +90,7 @@ func (l *LocationService) GetTrackedLocation() ([]models.UserLocation, error) {
 func (l *LocationService) UpsertHomeLocation(location LocationPayload) error {
 	homeLocation, err := l.GetHomeLocation()
 	if err != nil {
-		l.logger.Error("error getting home location: ", "err", err)
+		l.logger.Error("error getting home location", "err", err)
 		return errors.New("error getting home location")
 	}
 
@@ -114,7 +114,7 @@ func (l *LocationService) UpsertHomeLocation(location LocationPayload) error {
 	}
 
 	if err != nil {
-		l.logger.Error("error updating home location: ", "err", err)
+		l.logger.Error("error updating home location", "err", err)
 		return errors.New("error updating home location")
 	}
 
@@ -137,7 +137,7 @@ func (l *LocationService) AddTrackedLocation(location LocationPayload) error {
 
 	err := l.userLocationRepository.Create(userLocation)
 	if err != nil {
-		l.logger.Error("error adding location: ", "err", err)
+		l.logger.Error("error adding location", "err", err)
 		return errors.New("error saving location")
 	}
 
@@ -147,7 +147,7 @@ func (l *LocationService) AddTrackedLocation(location LocationPayload) error {
 func (l *LocationService) DeleteTrackedLocation(id int) error {
 	err := l.userLocationRepository.Delete(id)
 	if err != nil {
-		l.logger.Error("error deleting location: ", "err", err)
+		l.logger.Error("error deleting location", "err", err)
 		return errors.New("error deleting location")
 	}
 

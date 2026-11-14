@@ -9,7 +9,7 @@ import useLocationSearch from "../hooks/useLocationSearch";
 import { api } from "../api";
 import { locationSearchResultToLocationPayload } from "../mapper";
 
-import { ErrorState, LocationSearchResult } from "../types";
+import type { ErrorState, LocationSearchResult } from "../types";
 
 const Add = () => {
   const [query, setQuery] = useState("");
@@ -61,7 +61,7 @@ const Add = () => {
       </div>
 
       <div className="flex min-h-0 flex-col space-y-4">
-        <div className="shrink-0">
+        <div className="realtive shrink-0">
           <label className="mb-1.5 block text-xs font-medium text-blue-200/70">Location</label>
 
           <div className="relative">

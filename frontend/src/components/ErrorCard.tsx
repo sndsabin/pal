@@ -24,11 +24,14 @@ const ErrorCard = ({ message }: Props) => {
     return null;
   }
 
-  return (
-    <div className="mt-4 rounded-xl border border-red-300/15 bg-red-500/[0.06] px-3.5 py-3">
-      <div className="flex items-center gap-2.5">
-        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-300/80" />
+  if (message.trim() === "") {
+    return null;
+  }
 
+  return (
+    <div className="fixed bottom-4 left-1/2 z-[9999] w-[calc(100%-32px)] max-w-md -translate-x-1/2 rounded-xl border border-red-300/15 bg-[#1a1020] px-3.5 py-3 shadow-2xl">
+      <div className="flex items-center gap-2.5">
+        <AlertCircle className="h-4 w-4 shrink-0 text-red-300/80" />
         <div className="min-w-0">
           <p className="text-xs font-medium text-red-100/90">{message}</p>
         </div>
