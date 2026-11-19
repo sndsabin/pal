@@ -10,11 +10,13 @@ import (
 	"pal/backend/logging"
 	"pal/backend/services"
 	"pal/backend/weather"
+	"pal/backend/workers"
 	"pal/backend/workspace"
 	"path/filepath"
 	"strings"
 
-	"github.com/wailsapp/wails/v3/pkg/services/notifications"
+	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 //go:embed resources/db/db.sqlite
@@ -31,7 +33,7 @@ type App struct {
 	NotificationService    *services.NotificationService
 }
 
-func New(appName string, appVersion string, notifier *notifications.NotificationService) (*App, error) {
+func New(appName string, appVersion string) (*App, error) {
 	if appName == "" || appVersion == "" {
 		return nil, errors.New("app name or version cannot be empty")
 	}
@@ -88,7 +90,7 @@ func New(appName string, appVersion string, notifier *notifications.Notification
 	applicationInfoService := services.NewApplicationInfoService(appName, appVersion)
 	weatherService := services.NewWeatherService(logger, weatherProvider, *userLocationRepo, *weatherRepo)
 	timerService := services.NewTimerService(logger, *timerRepo)
-	notificationService := services.NewNotificationService(logger, notifier, userPreferenceService)
+	notificationService := services.NewNotificationService(logger, userPreferenceService)
 
 	return &App{
 		db:                     db,
@@ -100,6 +102,26 @@ func New(appName string, appVersion string, notifier *notifications.Notification
 		TimerService:           timerService,
 		NotificationService:    notificationService,
 	}, nil
+}
+
+func (a *App) RegisterEventHandlers(app *application.App, window *application.WebviewWindow) {
+	app.Event.OnApplicationEvent(events.Common.ApplicationStarted, func(*application.ApplicationEvent) {
+		// refresh weather data of all users location periodically
+		go workers.RefreshWeatherDataPeriodically(app, a.Logger, a.WeatherService)
+
+		// track running timers
+		go workers.TrackRunningTimers(
+			app,
+			a.Logger,
+			a.TimerService,
+			a.NotificationService,
+		)
+	})
+
+	app.Event.On(services.TimerCompletedClickedEvent, func(e *application.CustomEvent) {
+		window.Show()
+		window.Focus()
+	})
 }
 
 func (a *App) Close() {
