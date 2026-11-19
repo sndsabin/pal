@@ -27,5 +27,5 @@ type WeatherResponse struct {
 }
 
 type WeatherProvider interface {
-	FetchWeather(location string) (*WeatherResponse, error)
+	FetchWeather(location string, timezone string) (*WeatherResponse, error)
 }

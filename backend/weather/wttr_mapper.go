@@ -25,7 +25,7 @@ func ToWeather(data *WttrResponse) (*WeatherResponse, error) {
 
 	for _, day := range data.Weather {
 		for _, hour := range day.Hourly {
-			forecastAt, err := parseForcastTime(day.Date, hour.Hour)
+			forecastAt, err := parseForcastTime(day.Date, hour.Hour, data.Timezone)
 			if err != nil {
 				return nil, err
 			}
@@ -74,10 +74,15 @@ func parseIcon(values []struct {
 	return values[0].Url
 }
 
-func parseForcastTime(date string, val string) (time.Time, error) {
+func parseForcastTime(date string, val string, tz string) (time.Time, error) {
 	hour, err := strconv.Atoi(strings.TrimSpace(val))
 	if err != nil {
 		return time.Time{}, fmt.Errorf("error parsing forecast hour: %w", err)
+	}
+
+	timezone := strings.TrimSpace(tz)
+	if timezone == "" {
+		return time.Time{}, errors.New("timezone cannot be empty")
 	}
 
 	// wttr.in returns the hour as HHMM without a colon in 24 hour format
@@ -87,7 +92,13 @@ func parseForcastTime(date string, val string) (time.Time, error) {
 	}
 
 	forecastTime := fmt.Sprintf("%04d", hour)
-	forecastAt, err := time.Parse("2006-01-02 1504", date+" "+forecastTime)
+
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error loading timezone location: %w", err)
+	}
+
+	forecastAt, err := time.ParseInLocation("2006-01-02 1504", date+" "+forecastTime, loc)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("invalid forecast datetime: %w", err)
 	}

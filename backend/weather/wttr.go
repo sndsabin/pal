@@ -34,4 +34,6 @@ type WttrResponse struct {
 			} `json:"weatherIconUrl"`
 		} `json:"hourly"`
 	} `json:"weather"`
+
+	Timezone string `json:"timezone"`
 }

@@ -23,8 +23,8 @@ export const getDateTime = (timezone: string, hour12: boolean) => {
   };
 };
 
-export const isDay = (date: string | Date) => {
-  const hour = new Date(date).getHours();
+export const isDay = (date: string | Date | DateTime) => {
+  const hour = date instanceof DateTime ? date.hour : new Date(date).getHours();
 
   return hour >= 6 && hour < 18;
 };

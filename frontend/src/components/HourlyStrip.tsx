@@ -58,15 +58,19 @@ const HourlyStrip = ({ hourlyWeather, hour12 }: Props) => {
         onScroll={updateEdges}
         className="flex min-w-0 flex-1 snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
       >
-        {hourlyWeather.map((data, i) => (
-          <Cell
-            key={i}
-            temperature={data.temperature}
-            label={DateTime.fromISO(data.forecast_at).toFormat(hour12 ? "h a" : "HH:mm")}
-            condition={data.condition}
-            isDay={isDay(data.forecast_at)}
-          />
-        ))}
+        {hourlyWeather.map((data, i) => {
+          const forecastAt = DateTime.fromISO(data.forecast_at).setZone(data.location_timezone);
+
+          return (
+            <Cell
+              key={i}
+              temperature={data.temperature}
+              label={DateTime.fromISO(data.forecast_at).toFormat(hour12 ? "h a" : "HH:mm")}
+              condition={data.condition}
+              isDay={isDay(forecastAt)}
+            />
+          );
+        })}
       </div>
 
       <button

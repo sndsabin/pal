@@ -23,7 +23,7 @@ func NewWttrClient() *WttrClient {
 	}
 }
 
-func (wc *WttrClient) FetchWeather(location string) (*WeatherResponse, error) {
+func (wc *WttrClient) FetchWeather(location string, timezone string) (*WeatherResponse, error) {
 	location = strings.TrimSpace(location)
 
 	if location == "" {
@@ -54,6 +54,9 @@ func (wc *WttrClient) FetchWeather(location string) (*WeatherResponse, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("error decoding response body: %w", err)
 	}
+
+	// add timezone
+	result.Timezone = timezone
 
 	formattedResult, err := ToWeather(&result)
 	if err != nil {
