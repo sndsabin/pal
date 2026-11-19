@@ -169,7 +169,7 @@ func (w *WeatherRepository) CleanupHourlyWeather(locationId int) error {
 		ctx,
 		query,
 		locationId,
-		time.Now().Unix(),
+		time.Now(),
 	)
 	if err != nil {
 		return err
