@@ -63,7 +63,7 @@ const TimerSetup = ({ onStart }: Props) => {
                 onClick={(e) => {
                   setHours(0);
                   setMinutes(preset);
-                  setHours(0);
+                  setSeconds(0);
                 }}
                 className={`h-6 rounded-full border px-2.5 text-[11px] font-medium transition ${
                   isActive
