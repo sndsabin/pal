@@ -117,20 +117,14 @@ func (w *WeatherService) GetOrRefreshWeatherData(payload []WeatherPayload, ignor
 				weatherData, err := w.fetchAndSaveWeatherData(location.LocationIdentifier, location.LocationID)
 				if err != nil {
 					errChan <- fmt.Errorf("something went wrong while fetching and saving weather data for %s: %w", location.LocationIdentifier, err)
-				}
-
-				if weatherData != nil {
-					mu.Lock()
-					result = append(result, weatherData)
-					mu.Unlock()
-					return // skip refetching hourly weather data
-				}
-
-				// if there's no current weather data for specified location and fetching failed
-				// skip fetching the hourly weather record
-				if !exists {
 					return
 				}
+
+				mu.Lock()
+				result = append(result, weatherData)
+				mu.Unlock()
+				return
+
 			}
 
 			// fetch hourly record
