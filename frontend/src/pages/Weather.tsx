@@ -78,7 +78,7 @@ const Weather = () => {
               />
             </div>
 
-            {homeHourlyWeather?.length && (
+            {homeHourlyWeather && homeHourlyWeather.length > 0 && (
               <HourlyStrip hourlyWeather={homeHourlyWeather} hour12={is12hr} />
             )}
           </>
