@@ -75,7 +75,7 @@ func New(appName string, appVersion string, notifier *notifications.Notification
 	userLocationRepo := repositories.NewUserLocationRepository(db)
 	locationSearchRepo := repositories.NewLocationSearchRepository(db)
 	userPreferenceRepo := repositories.NewUserPreferenceRepository(db)
-	weatherRepo := repositories.NewWeatherRepostiory(db)
+	weatherRepo := repositories.NewWeatherRepository(db)
 	timerRepo := repositories.NewTimerRepository(db)
 
 	// services

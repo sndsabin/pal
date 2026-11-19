@@ -13,7 +13,7 @@ type WeatherRepository struct {
 	db *sql.DB
 }
 
-func NewWeatherRepostiory(db *sql.DB) *WeatherRepository {
+func NewWeatherRepository(db *sql.DB) *WeatherRepository {
 	return &WeatherRepository{
 		db: db,
 	}
