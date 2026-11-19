@@ -21,12 +21,14 @@ const getRemainingSeconds = (timer: Timer) => {
     return 0;
   }
 
-  return Math.max(
-    0,
-    Math.ceil(
-      DateTime.fromISO(timer.created_at).toSeconds() + timer.duration - DateTime.now().toSeconds(),
-    ),
-  );
+  const endTime = DateTime.fromISO(timer.created_at).toSeconds() + timer.duration;
+
+  const referenceTime =
+    timer.status === TimerStatus.TimerStatusPaused && timer.paused_at
+      ? DateTime.fromISO(timer.paused_at).toSeconds()
+      : DateTime.now().toSeconds();
+
+  return Math.max(0, Math.ceil(endTime - referenceTime));
 };
 
 const TimerDetail = ({ timer, now, hour12, onAddMinute, onResume, onPause, onDelete }: Props) => {
