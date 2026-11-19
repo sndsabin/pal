@@ -20,17 +20,16 @@ const Timer = () => {
 
   const hour12 = timeFormat === TimeFormatOption.TimeFormat12Hour;
 
-  const runningTimer = useMemo(() => {
-    return timers?.find((timer) => timer.status === TimerStatus.TimerStatusRunning) ?? null;
-  }, [timers]);
+  const runningTimer =
+    timers?.find((timer) => timer.status === TimerStatus.TimerStatusRunning) ?? null;
 
-  const otherTimers = timers?.filter((timer) => timer.id !== runningTimer?.id) ?? [];
+  const sortedOtherTimers = useMemo(() => {
+    const otherTimers = timers?.filter((timer) => timer.id !== runningTimer?.id) ?? [];
 
-  const sortTimers = (items: Timer[]) => {
-    return [...items].sort(
+    return [...otherTimers].sort(
       (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
     );
-  };
+  }, [timers, runningTimer]);
 
   const updateTimers = (updatedTimer: Timer) => {
     setTimers((prev) => {
@@ -73,7 +72,7 @@ const Timer = () => {
   const recentlyFinishedTimer = useMemo(() => {
     const recentlyFinished = (timer: Timer, timeWindowInSeconds: number = 10) => {
       const finishedAt = new Date(timer.created_at).getTime() / 1000 + timer.duration;
-      const elapsed = Date.now() / 1000 - finishedAt;
+      const elapsed = now / 1000 - finishedAt;
 
       return elapsed >= 0 && elapsed < timeWindowInSeconds;
     };
@@ -87,7 +86,7 @@ const Timer = () => {
         return timer;
       }
     });
-  }, [timers, dismissedTimerId]);
+  }, [timers, dismissedTimerId, now]);
 
   const handleCreateTimerAction = (name: string, duration: number) => {
     api
@@ -206,13 +205,13 @@ const Timer = () => {
         )}
       </div>
 
-      {otherTimers.length > 0 && (
+      {sortedOtherTimers.length > 0 && (
         <div className="custom-scrollbar mt-3.5 min-h-0 flex-1 overflow-y-auto">
           <div className="text-[11px] font-medium tracking-[0.12em] text-blue-200/70 uppercase">
             Other Timers
           </div>
 
-          {sortTimers(otherTimers).map((timer) => {
+          {sortedOtherTimers.map((timer) => {
             const isRunning = timer.status === TimerStatus.TimerStatusRunning;
 
             return (
