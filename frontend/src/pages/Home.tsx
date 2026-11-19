@@ -159,18 +159,16 @@ const Home = () => {
     refreshWeatherData();
   }, [weatherPayload]);
 
-  const refreshWeatherData = (ignoreWeatherCacheTTL = false) => {
+  const refreshWeatherData = async (ignoreWeatherCacheTTL = false) => {
     if (weatherPayload.length) {
-      api
-        .getWeatherData(weatherPayload, ignoreWeatherCacheTTL)
-        .then((record) => {
-          if (record) {
-            setWeatherData(record.filter((data) => data !== null));
-          }
-        })
-        .catch((err: unknown) => {
-          reportError(err);
-        });
+      try {
+        const record = await api.getWeatherData(weatherPayload, ignoreWeatherCacheTTL);
+        if (record) {
+          setWeatherData(record.filter((data) => data !== null));
+        }
+      } catch (err: unknown) {
+        reportError(err);
+      }
     }
   };
 

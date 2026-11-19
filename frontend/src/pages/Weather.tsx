@@ -106,9 +106,9 @@ const Weather = () => {
             title="Refresh weather"
             aria-label="Refresh weather"
             disabled={isRefreshing}
-            onClick={() => {
+            onClick={async () => {
               setIsRefreshing(true);
-              onRefreshWeather(true);
+              await onRefreshWeather(true);
               setIsRefreshing(false);
             }}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white shadow-inner transition hover:bg-white/20 disabled:opacity-60"
