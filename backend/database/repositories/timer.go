@@ -178,6 +178,36 @@ func (t *TimerRepository) Update(timer models.Timer) (*models.Timer, error) {
 	return scanTimer(row)
 }
 
+func (t *TimerRepository) Complete(id int) (*models.Timer, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), QueryTimeoutDuration)
+	defer cancel()
+
+	query := `
+		UPDATE timers
+		SET
+			status=$1
+		WHERE status= $2 AND id = $3
+		RETURNING
+			id,
+			name,
+			duration,
+			status,
+			created_at,
+			paused_at,
+			updated_at;
+	`
+
+	row := t.db.QueryRowContext(
+		ctx,
+		query,
+		models.TimerStatusCompleted,
+		models.TimerStatusRunning,
+		id,
+	)
+
+	return scanTimer(row)
+}
+
 func (t *TimerRepository) Delete(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), QueryTimeoutDuration)
 	defer cancel()

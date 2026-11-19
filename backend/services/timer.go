@@ -121,15 +121,7 @@ func (t *TimerService) PauseTimer(id int) (*models.Timer, error) {
 }
 
 func (t *TimerService) CompleteTimer(id int) (*models.Timer, error) {
-	timer, err := t.timerRepository.GetById(id)
-	if err != nil {
-		t.logger.Error("error fetching timer", "id", id, "err", err)
-		return nil, errors.New("error completing timer")
-	}
-
-	timer.Status = models.TimerStatusCompleted
-
-	result, err := t.timerRepository.Update(*timer)
+	result, err := t.timerRepository.Complete(id)
 	if err != nil {
 		t.logger.Error("error completing timer", "id", id, "err", err)
 		return nil, errors.New("error completing timer")
