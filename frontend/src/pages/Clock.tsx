@@ -57,9 +57,16 @@ const Clock = () => {
     setTrackedLocationSelectOptions(options);
   }, [trackedLocations]);
 
+  const hasHomeLocation = !isLocationLoading && homeLocation;
+  const hasTrackedLocation = !isLocationLoading && trackedLocations;
+  const showEmptyLocation = !isLocationLoading && !homeLocation;
+  const showTrackedLocation = hasHomeLocation && !isConverterExpanded;
+  const showTimeConverter = isConverterExpanded && hasHomeLocation && hasTrackedLocation;
+  const showTimeConverterBar = hasHomeLocation && hasTrackedLocation;
+
   return (
     <>
-      {!isLocationLoading && !homeLocation && (
+      {showEmptyLocation && (
         <EmptyLocation
           title={"No hometown set"}
           description={"Set hometown to personalize your time view."}
@@ -68,7 +75,7 @@ const Clock = () => {
         />
       )}
 
-      {!isConverterExpanded && homeLocation && (
+      {showTrackedLocation && (
         <TrackedLocationsList
           locations={trackedLocations}
           weatherData={weatherData}
@@ -77,14 +84,14 @@ const Clock = () => {
         />
       )}
 
-      {isConverterExpanded && homeLocation && trackedLocations && (
+      {showTimeConverter && (
         <TimeConverter
           locationSelectOptions={trackedLocationSelectOptions}
           homeLocation={homeLocation}
         />
       )}
 
-      {homeLocation && trackedLocations && (
+      {showTimeConverterBar && (
         <TimeConverterBar
           isExpanded={isConverterExpanded}
           onToggle={handleTimeConverterBarToggleAction}
