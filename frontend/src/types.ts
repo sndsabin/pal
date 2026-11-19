@@ -49,7 +49,7 @@ export interface Tab {
 
 export type DayPeriod = (typeof DayPeriodOption)[keyof typeof DayPeriodOption] | null;
 
-export type { LocationPayload, WeatherPayload } from "../bindings/pal/backend/services";
+export type { LocationPayload } from "../bindings/pal/backend/services";
 export type { LocationSearchResult } from "../bindings/pal/backend/database/models";
 export type {
   UserLocation,

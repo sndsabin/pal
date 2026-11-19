@@ -52,25 +52,22 @@ const Home = () => {
       })
       .catch(reportError);
 
-    api
-      .getHomeLocation()
-      .then((location) => {
-        if (location && location.id !== 0) {
-          setRawHomeLocation(location);
+    Promise.all([api.getHomeLocation(), api.getTrackedLocation()])
+      .then(([homeLocation, trackedLocations]) => {
+        if (homeLocation && homeLocation.id !== 0) {
+          setRawHomeLocation(homeLocation);
         }
+
+        setRawTrackedLocations(trackedLocations ?? []);
       })
-      .catch(reportError);
+      .catch(reportError)
+      .finally(() => {
+        setIsLocationLoading(false);
+      });
 
-    api
-      .getTrackedLocation()
-      .then((location) => {
-        setRawTrackedLocations(location ?? []);
-      })
-      .catch(reportError);
+    getWeatherData();
 
-    setIsLocationLoading(false);
-
-    const unsubscribeWeatherRefreshedEvent = api.onWeatherRefreshed(refreshWeatherData);
+    const unsubscribeWeatherRefreshedEvent = api.onWeatherRefreshed(getWeatherData);
 
     return unsubscribeWeatherRefreshedEvent;
   }, []);
@@ -124,51 +121,14 @@ const Home = () => {
     }
   };
 
-  const weatherPayload = useMemo(() => {
-    const payload = [];
-    const locationIds: number[] = [];
-
-    if (rawHomeLocation) {
-      payload.push({
-        LocationID: rawHomeLocation.id,
-        LocationIdentifier: [rawHomeLocation.city, rawHomeLocation.state, rawHomeLocation.country]
-          .filter(Boolean)
-          .join(","),
-      });
-
-      locationIds.push(rawHomeLocation.id);
-    }
-
-    rawTrackedLocations.forEach((location) => {
-      if (!locationIds.includes(location.id)) {
-        payload.push({
-          LocationID: location.id,
-          LocationIdentifier: [location.city, location.state, location.country]
-            .filter(Boolean)
-            .join(","),
-        });
-
-        locationIds.push(location.id);
+  const getWeatherData = async (ignoreWeatherCacheTTL: boolean = false) => {
+    try {
+      const record = await api.getWeatherData(ignoreWeatherCacheTTL);
+      if (record) {
+        setWeatherData(record.filter((data: WeatherData | null) => data !== null));
       }
-    });
-
-    return payload;
-  }, [rawHomeLocation, rawTrackedLocations]);
-
-  useEffect(() => {
-    refreshWeatherData();
-  }, [weatherPayload]);
-
-  const refreshWeatherData = async (ignoreWeatherCacheTTL = false) => {
-    if (weatherPayload.length) {
-      try {
-        const record = await api.getWeatherData(weatherPayload, ignoreWeatherCacheTTL);
-        if (record) {
-          setWeatherData(record.filter((data) => data !== null));
-        }
-      } catch (err: unknown) {
-        reportError(err);
-      }
+    } catch (err: unknown) {
+      reportError(err);
     }
   };
 
@@ -205,7 +165,9 @@ const Home = () => {
             weatherData: weatherData,
             timeFormat: timeFormat,
             temperatureFormat: temperatureFormat,
-            onRefreshWeather: refreshWeatherData,
+            onRefreshWeather: () => {
+              getWeatherData(true);
+            },
             onTrackedLocationDelete: handleTrackedLocationDeleteAction,
             onError: reportError,
           }}

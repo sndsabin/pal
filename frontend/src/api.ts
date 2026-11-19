@@ -20,7 +20,6 @@ import {
   PauseTimer,
   StartTimer,
 } from "../bindings/pal/backend/services/timerservice";
-import { GetOrRefreshWeatherData } from "../bindings/pal/backend/services/weatherservice";
 
 import {
   TIMER_COMPLETED_EVENT,
@@ -29,6 +28,7 @@ import {
   WINDOW_SHOW_EVENT,
 } from "./constants";
 import { Timer } from "./types";
+import { GetAllUserLocationWeatherData } from "../bindings/pal/backend/services/weatherservice";
 
 export const api = {
   searchLocation: SearchLocation,
@@ -36,7 +36,9 @@ export const api = {
   upsertHomeLocation: UpsertHomeLocation,
   getUserPreference: GetUserPreference,
   getTrackedLocation: GetTrackedLocation,
-  getWeatherData: GetOrRefreshWeatherData,
+  getWeatherData: (ignoreCacheTTL: boolean = false) => {
+    return GetAllUserLocationWeatherData(ignoreCacheTTL);
+  },
   getAllTimers: GetAllTimers,
   addTrackedLocation: AddTrackedLocation,
   deleteTrackedLocation: DeleteTrackedLocation,

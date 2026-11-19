@@ -20,7 +20,7 @@ func RefreshWeatherDataPeriodically(app *application.App, logger *logging.Logger
 	for {
 		select {
 		case <-ticker.C:
-			if err := weatherService.RefreshWeatherData(); err != nil {
+			if _, err := weatherService.GetAllUserLocationWeatherData(false); err != nil {
 				logger.Error("error refreshing weather data", "err", err)
 				continue
 			}

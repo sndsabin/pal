@@ -23,8 +23,3 @@ export interface UserPreferencePayload {
     "TemperatureFormat": string;
     "AlertSound": boolean;
 }
-
-export interface WeatherPayload {
-    "LocationID": number;
-    "LocationIdentifier": string;
-}

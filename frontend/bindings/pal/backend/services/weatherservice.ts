@@ -12,18 +12,10 @@ import * as models$0 from "../database/models/models.js";
 // @ts-ignore: Unused imports
 import * as weather$0 from "../weather/models.js";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: Unused imports
-import * as $models from "./models.js";
-
-export function GetOrRefreshWeatherData(payload: $models.WeatherPayload[] | null, ignoreCacheTTL: boolean): $CancellablePromise<(models$0.WeatherData | null)[] | null> {
-    return $Call.ByID(1652045149, payload, ignoreCacheTTL);
+export function GetAllUserLocationWeatherData(ignoreCacheTTL: boolean): $CancellablePromise<(models$0.WeatherData | null)[] | null> {
+    return $Call.ByID(2796791824, ignoreCacheTTL);
 }
 
 export function GetWWOConditionFor(code: number): $CancellablePromise<weather$0.WeatherCondition> {
     return $Call.ByID(4236609864, code);
-}
-
-export function RefreshWeatherData(): $CancellablePromise<void> {
-    return $Call.ByID(1614919218);
 }

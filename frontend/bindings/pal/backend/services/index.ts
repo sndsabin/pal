@@ -19,6 +19,5 @@ export {
 export type {
     ApplicationInfo,
     LocationPayload,
-    UserPreferencePayload,
-    WeatherPayload
+    UserPreferencePayload
 } from "./models.js";

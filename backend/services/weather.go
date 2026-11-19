@@ -41,11 +41,11 @@ func NewWeatherService(
 	}
 }
 
-func (w *WeatherService) RefreshWeatherData() error {
+func (w *WeatherService) GetAllUserLocationWeatherData(ignoreCacheTTL bool) ([]*models.WeatherData, error) {
 	userLocations, err := w.userLocationRepository.GetAllLocation()
 	if err != nil {
 		w.logger.Error("error fetching all user locations", "err", err)
-		return errors.New("something went wrong while fetching all user locations")
+		return nil, errors.New("something went wrong while fetching all user locations")
 	}
 
 	var payload []WeatherPayload
@@ -60,15 +60,20 @@ func (w *WeatherService) RefreshWeatherData() error {
 		})
 	}
 
-	if _, err = w.GetOrRefreshWeatherData(payload, false); err != nil {
+	result, err := w.getOrRefreshWeatherData(payload, ignoreCacheTTL)
+	if err != nil {
 		w.logger.Error("error refreshing weather for all user locations", "err", err)
-		return errors.New("something went wrong while fetching all weather data")
+		return nil, errors.New("something went wrong while fetching all weather data")
 	}
 
-	return nil
+	return result, nil
 }
 
-func (w *WeatherService) GetOrRefreshWeatherData(payload []WeatherPayload, ignoreCacheTTL bool) ([]*models.WeatherData, error) {
+func (w *WeatherService) GetWWOConditionFor(code int) weather.WeatherCondition {
+	return weather.LookupWWOCondition(code)
+}
+
+func (w *WeatherService) getOrRefreshWeatherData(payload []WeatherPayload, ignoreCacheTTL bool) ([]*models.WeatherData, error) {
 	if len(payload) == 0 {
 		return nil, errors.New("location ids cant be empty")
 	}
@@ -154,10 +159,6 @@ func (w *WeatherService) GetOrRefreshWeatherData(payload []WeatherPayload, ignor
 	}
 
 	return result, nil
-}
-
-func (w *WeatherService) GetWWOConditionFor(code int) weather.WeatherCondition {
-	return weather.LookupWWOCondition(code)
 }
 
 func (w *WeatherService) fetchAndSaveWeatherData(identifier string, locationId int) (*models.WeatherData, error) {
