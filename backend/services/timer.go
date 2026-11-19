@@ -88,6 +88,10 @@ func (t *TimerService) AddDuration(id int, duration int) (*models.Timer, error) 
 		return nil, errors.New("error adding duration")
 	}
 
+	if timer.Status == models.TimerStatusPaused {
+		return nil, errors.New("cannot add duration to paused timer")
+	}
+
 	timer.Duration += duration
 	timer.Status = models.TimerStatusRunning
 
