@@ -28,7 +28,6 @@ type HourlyWeather struct {
 }
 
 type WeatherData struct {
-	Timezone string `json:"timezone"`
-	Current  *CurrentWeather
-	Hourly   []*HourlyWeather
+	Current *CurrentWeather
+	Hourly  []*HourlyWeather
 }

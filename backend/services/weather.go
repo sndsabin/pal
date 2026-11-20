@@ -143,9 +143,8 @@ func (w *WeatherService) getOrRefreshWeatherData(payload WeatherPayload, ignoreC
 
 			mu.Lock()
 			result = append(result, &models.WeatherData{
-				Timezone: location.Timezone,
-				Current:  current,
-				Hourly:   hourlyData,
+				Current: current,
+				Hourly:  hourlyData,
 			})
 			mu.Unlock()
 		}()
@@ -214,9 +213,6 @@ func (w *WeatherService) fetchAndSaveWeatherData(location models.UserLocation) (
 		)
 		return nil, errors.New("something went wrong while saving weather data")
 	}
-
-	// add timezone data
-	data.Timezone = location.Timezone
 
 	// cleanup old hourly weather data
 	err = w.weatherRepository.CleanupHourlyWeather(location.ID)
