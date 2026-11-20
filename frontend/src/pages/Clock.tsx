@@ -23,7 +23,7 @@ export type HomeOutletContext = {
   timeFormat: TimeFormat;
   temperatureFormat: TemperatureFormat;
   onError: (err: unknown) => void;
-  onRefreshWeather: (ignoreWeatherCacheTTL?: boolean) => void;
+  onRefreshWeather: (ignoreWeatherCacheTTL?: boolean) => Promise<void>;
   onTrackedLocationDelete: (id: number) => Promise<void>;
 };
 

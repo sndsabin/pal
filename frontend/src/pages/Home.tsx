@@ -165,8 +165,8 @@ const Home = () => {
             weatherData: weatherData,
             timeFormat: timeFormat,
             temperatureFormat: temperatureFormat,
-            onRefreshWeather: () => {
-              getWeatherData(true);
+            onRefreshWeather: async () => {
+              await getWeatherData(true);
             },
             onTrackedLocationDelete: handleTrackedLocationDeleteAction,
             onError: reportError,

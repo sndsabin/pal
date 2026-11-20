@@ -36,8 +36,8 @@ export const api = {
   upsertHomeLocation: UpsertHomeLocation,
   getUserPreference: GetUserPreference,
   getTrackedLocation: GetTrackedLocation,
-  getWeatherData: (ignoreCacheTTL: boolean = false) => {
-    return GetAllUserLocationWeatherData(ignoreCacheTTL);
+  getWeatherData: async (ignoreCacheTTL: boolean = false) => {
+    return await GetAllUserLocationWeatherData(ignoreCacheTTL);
   },
   getAllTimers: GetAllTimers,
   addTrackedLocation: AddTrackedLocation,
