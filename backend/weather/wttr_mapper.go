@@ -36,7 +36,7 @@ func ToWeather(data *WttrResponse) (*WeatherResponse, error) {
 				FeelsLike:   toFloat(hour.FeelsLike),
 				Condition:   LookupWWOCondition(toInt(hour.WeatherCode)),
 				Icon:        parseIcon(hour.Icon),
-				ForecastAt:  forecastAt,
+				ForecastAt:  forecastAt.UTC(),
 			})
 		}
 	}

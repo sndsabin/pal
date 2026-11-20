@@ -60,13 +60,14 @@ const HourlyStrip = ({ hourlyWeather, hour12, timezone }: Props) => {
         className="flex min-w-0 flex-1 snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
       >
         {hourlyWeather.map((data, i) => {
+          // forecast time is UTC. so convert it to specified timezone
           const forecastAt = DateTime.fromISO(data.forecast_at).setZone(timezone);
 
           return (
             <Cell
               key={i}
               temperature={data.temperature}
-              label={DateTime.fromISO(data.forecast_at).toFormat(hour12 ? "h a" : "HH:mm")}
+              label={forecastAt.toFormat(hour12 ? "h a" : "HH:mm")}
               condition={data.condition}
               isDay={isDay(forecastAt)}
             />
