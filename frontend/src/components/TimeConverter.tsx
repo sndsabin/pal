@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Info } from "lucide-react";
 
-import { convertTime, getNow } from "../pages/time";
+import { convertTime, getNow } from "../time";
 
-import { HomeLocation, TrackedLocationSelectOption } from "../types";
+import type { HomeLocation, TrackedLocationSelectOption } from "../types";
 
 interface Props {
   locationSelectOptions: TrackedLocationSelectOption[];

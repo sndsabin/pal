@@ -12,6 +12,12 @@ type UserPreferenceService struct {
 	userPreferenceRepository repositories.UserPreferenceRepository
 }
 
+type UserPreferencePayload struct {
+	TimeFormat        string
+	TemperatureFormat string
+	AlertSound        bool
+}
+
 func NewUserService(logger *logging.Logger, upRepo repositories.UserPreferenceRepository) *UserPreferenceService {
 	return &UserPreferenceService{
 		logger:                   logger,
@@ -19,45 +25,44 @@ func NewUserService(logger *logging.Logger, upRepo repositories.UserPreferenceRe
 	}
 }
 
-func (up *UserPreferenceService) GetTimeFormat() (models.TimeFormat, error) {
-	userPreference, err := up.getUserPreference()
-	if err != nil {
-		return "", err
-	}
-
-	return userPreference.TimeFormat, nil
-}
-
-func (up *UserPreferenceService) UpdateTimeFormat(timeFormat string) error {
-	userPreference, err := up.getUserPreference()
-	if err != nil {
-		return err
-	}
-
-	tf := models.TimeFormat(timeFormat)
-	if !tf.IsValid() {
-		return errors.New("invalid time format")
-	}
-	userPreference.TimeFormat = tf
-
-	err = up.userPreferenceRepository.Update(*userPreference)
-	if err != nil {
-		up.logger.Error("error updating user preference: ", "err", err)
-
-		return errors.New("error saving preference")
-	}
-
-	return nil
-}
-
-func (up *UserPreferenceService) getUserPreference() (*models.UserPreference, error) {
+func (up *UserPreferenceService) GetUserPreference() (*models.UserPreference, error) {
 	// user preference table has only one row as of now.
 	userPreference, err := up.userPreferenceRepository.GetById(1)
 	if err != nil {
-		up.logger.Error("error fetching user preference: ", "err", err)
+		up.logger.Error("error fetching user preference", "err", err)
 
 		return nil, errors.New("error fetching user preference.")
 	}
 
 	return userPreference, nil
+}
+
+func (up *UserPreferenceService) UpdateUserPreference(payload UserPreferencePayload) error {
+	userPreference, err := up.GetUserPreference()
+	if err != nil {
+		return err
+	}
+
+	timef := models.TimeFormat(payload.TimeFormat)
+	if !timef.IsValid() {
+		return errors.New("invalid time format")
+	}
+
+	tempf := models.TemperatureFormat(payload.TemperatureFormat)
+	if !tempf.IsValid() {
+		return errors.New("invalid temperature format")
+	}
+
+	userPreference.TimeFormat = timef
+	userPreference.TemperatureFormat = tempf
+	userPreference.AlertSound = payload.AlertSound
+
+	err = up.userPreferenceRepository.Update(*userPreference)
+	if err != nil {
+		up.logger.Error("error updating user preference", "err", err)
+
+		return errors.New("error saving preference")
+	}
+
+	return nil
 }

@@ -46,39 +46,39 @@ func (ul *UserLocationRepository) GetLocationByType(locationType string) ([]*mod
 	}
 	defer rows.Close()
 
-	var locations []*models.UserLocation
+	return scanLocations(rows)
+}
 
-	for rows.Next() {
-		var location models.UserLocation
+func (ul *UserLocationRepository) GetAllLocation() ([]*models.UserLocation, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), QueryTimeoutDuration)
+	defer cancel()
 
-		err := rows.Scan(
-			&location.ID,
-			&location.LocationType,
-			&location.Scope,
-			&location.CityID,
-			&location.StateID,
-			&location.CountryID,
-			&location.TimezoneID,
-			&location.City,
-			&location.State,
-			&location.Country,
-			&location.CountryFlag,
-			&location.Timezone,
-			&location.CreatedAt,
-			&location.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
+	query := `
+		SELECT 
+			id,
+			type,
+			scope,
+			city_id,
+			state_id,
+			country_id,
+			timezone_id,
+			city,
+			state,
+			country,
+			country_flag,
+			timezone,
+			created_at,
+			updated_at 
+		FROM user_locations;
+	`
 
-		locations = append(locations, &location)
-	}
-
-	if err := rows.Err(); err != nil {
+	rows, err := ul.db.QueryContext(ctx, query)
+	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	return locations, nil
+	return scanLocations(rows)
 }
 
 func (ul *UserLocationRepository) Create(location models.UserLocation) error {
@@ -198,4 +198,40 @@ func getLocationScope(location models.UserLocation) models.LocationScope {
 	}
 
 	return models.LocationScopeCountry
+}
+
+func scanLocations(rows *sql.Rows) ([]*models.UserLocation, error) {
+	var locations []*models.UserLocation
+
+	for rows.Next() {
+		var location models.UserLocation
+
+		err := rows.Scan(
+			&location.ID,
+			&location.LocationType,
+			&location.Scope,
+			&location.CityID,
+			&location.StateID,
+			&location.CountryID,
+			&location.TimezoneID,
+			&location.City,
+			&location.State,
+			&location.Country,
+			&location.CountryFlag,
+			&location.Timezone,
+			&location.CreatedAt,
+			&location.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, &location)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return locations, nil
 }

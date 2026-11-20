@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { api } from "../api";
 
-import { LocationSearchResult } from "../types";
+import type { LocationSearchResult } from "../types";
 
 const TIME_DELAY = 300;
 const SUGGESTION_LIMIT = 3;

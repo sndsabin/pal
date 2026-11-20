@@ -3,14 +3,21 @@
 
 import * as ApplicationInfoService from "./applicationinfoservice.js";
 import * as LocationService from "./locationservice.js";
+import * as NotificationService from "./notificationservice.js";
+import * as TimerService from "./timerservice.js";
 import * as UserPreferenceService from "./userpreferenceservice.js";
+import * as WeatherService from "./weatherservice.js";
 export {
     ApplicationInfoService,
     LocationService,
-    UserPreferenceService
+    NotificationService,
+    TimerService,
+    UserPreferenceService,
+    WeatherService
 };
 
 export type {
     ApplicationInfo,
-    LocationPayload
+    LocationPayload,
+    UserPreferencePayload
 } from "./models.js";

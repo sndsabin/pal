@@ -9,10 +9,14 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 // @ts-ignore: Unused imports
 import * as models$0 from "../database/models/models.js";
 
-export function GetTimeFormat(): $CancellablePromise<models$0.TimeFormat> {
-    return $Call.ByID(3395987181);
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as $models from "./models.js";
+
+export function GetUserPreference(): $CancellablePromise<models$0.UserPreference | null> {
+    return $Call.ByID(1757566841);
 }
 
-export function UpdateTimeFormat(timeFormat: string): $CancellablePromise<void> {
-    return $Call.ByID(783690602, timeFormat);
+export function UpdateUserPreference(payload: $models.UserPreferencePayload): $CancellablePromise<void> {
+    return $Call.ByID(3639831442, payload);
 }

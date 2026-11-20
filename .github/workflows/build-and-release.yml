@@ -262,7 +262,7 @@ jobs:
       - name: Create macOS DMG
         if: *is_mac
         run: |
-          wails3 task darwin:package:dmg
+          wails3 task darwin:create:dmg
           mkdir -p staging
           cp bin/${APP_NAME}.dmg staging/${APP_NAME}_${VERSION}_universal.dmg
         shell: bash
