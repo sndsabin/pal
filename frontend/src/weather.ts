@@ -25,7 +25,7 @@ export const celsiusToFahrenheit = (celcius: number) => {
 };
 
 export const getTimezone = (data: WeatherData[]) => {
-  return data[0]?.Timezone ?? "";
+  return data[0]?.timezone ?? "";
 };
 
 const getWeatherDataFor = (data: WeatherData[], locationId: number, toFahrenheit: boolean) => {

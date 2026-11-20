@@ -148,7 +148,7 @@ export interface UserPreference {
 }
 
 export interface WeatherData {
-    "Timezone": string;
+    "timezone": string;
     "Current": CurrentWeather | null;
     "Hourly": (HourlyWeather | null)[] | null;
 }
