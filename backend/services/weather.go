@@ -143,8 +143,9 @@ func (w *WeatherService) getOrRefreshWeatherData(payload WeatherPayload, ignoreC
 
 			mu.Lock()
 			result = append(result, &models.WeatherData{
-				Current: current,
-				Hourly:  hourlyData,
+				Timezone: location.Timezone,
+				Current:  current,
+				Hourly:   hourlyData,
 			})
 			mu.Unlock()
 		}()
@@ -180,27 +181,25 @@ func (w *WeatherService) fetchAndSaveWeatherData(location models.UserLocation) (
 	}
 
 	current := models.CurrentWeather{
-		LocationID:       location.ID,
-		LocationTimezone: location.Timezone,
-		Description:      weatherData.Current.Description,
-		Temperature:      weatherData.Current.Temperature,
-		FeelsLike:        weatherData.Current.FeelsLike,
-		Condition:        string(weatherData.Current.Condition),
-		Icon:             weatherData.Current.Icon,
+		LocationID:  location.ID,
+		Description: weatherData.Current.Description,
+		Temperature: weatherData.Current.Temperature,
+		FeelsLike:   weatherData.Current.FeelsLike,
+		Condition:   string(weatherData.Current.Condition),
+		Icon:        weatherData.Current.Icon,
 	}
 
 	var hourly []models.HourlyWeather
 
 	for _, hourlyWeatherData := range weatherData.Hourly {
 		hourlyData := models.HourlyWeather{
-			LocationID:       location.ID,
-			LocationTimezone: location.Timezone,
-			Description:      hourlyWeatherData.Description,
-			Temperature:      hourlyWeatherData.Temperature,
-			FeelsLike:        hourlyWeatherData.FeelsLike,
-			Condition:        string(hourlyWeatherData.Condition),
-			Icon:             hourlyWeatherData.Icon,
-			ForecastAt:       hourlyWeatherData.ForecastAt,
+			LocationID:  location.ID,
+			Description: hourlyWeatherData.Description,
+			Temperature: hourlyWeatherData.Temperature,
+			FeelsLike:   hourlyWeatherData.FeelsLike,
+			Condition:   string(hourlyWeatherData.Condition),
+			Icon:        hourlyWeatherData.Icon,
+			ForecastAt:  hourlyWeatherData.ForecastAt,
 		}
 
 		hourly = append(hourly, hourlyData)
@@ -215,6 +214,9 @@ func (w *WeatherService) fetchAndSaveWeatherData(location models.UserLocation) (
 		)
 		return nil, errors.New("something went wrong while saving weather data")
 	}
+
+	// add timezone data
+	data.Timezone = location.Timezone
 
 	// cleanup old hourly weather data
 	err = w.weatherRepository.CleanupHourlyWeather(location.ID)

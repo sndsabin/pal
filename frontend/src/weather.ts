@@ -24,6 +24,10 @@ export const celsiusToFahrenheit = (celcius: number) => {
   return (celcius * 9) / 5 + 32;
 };
 
+export const getTimezone = (data: WeatherData[]) => {
+  return data[0]?.Timezone ?? "";
+};
+
 const getWeatherDataFor = (data: WeatherData[], locationId: number, toFahrenheit: boolean) => {
   let weatherData = data.find((item) => item.Current?.location_id === locationId);
 

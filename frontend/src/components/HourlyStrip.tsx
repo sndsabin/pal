@@ -10,11 +10,12 @@ import type { HourlyWeather } from "../types";
 interface Props {
   hourlyWeather: HourlyWeather[];
   hour12: boolean;
+  timezone: string;
 }
 
 const VISIBLE_CELLS = 5;
 
-const HourlyStrip = ({ hourlyWeather, hour12 }: Props) => {
+const HourlyStrip = ({ hourlyWeather, hour12, timezone }: Props) => {
   const scroller = useRef<HTMLDivElement>(null);
   const [canScrollBack, setCanScrollBack] = useState(false);
   const [canScrollForward, setCanScrollForward] = useState(false);
@@ -59,7 +60,7 @@ const HourlyStrip = ({ hourlyWeather, hour12 }: Props) => {
         className="flex min-w-0 flex-1 snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
       >
         {hourlyWeather.map((data, i) => {
-          const forecastAt = DateTime.fromISO(data.forecast_at).setZone(data.location_timezone);
+          const forecastAt = DateTime.fromISO(data.forecast_at).setZone(timezone);
 
           return (
             <Cell

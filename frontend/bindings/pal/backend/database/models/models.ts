@@ -4,7 +4,6 @@
 export interface CurrentWeather {
     "id": number;
     "location_id": number;
-    "location_timezone": string;
     "description": string;
     "temperature": number;
     "feels_like": number;
@@ -17,7 +16,6 @@ export interface CurrentWeather {
 export interface HourlyWeather {
     "id": number;
     "location_id": number;
-    "location_timezone": string;
     "description": string;
     "temperature": number;
     "feels_like": number;
@@ -150,6 +148,7 @@ export interface UserPreference {
 }
 
 export interface WeatherData {
+    "Timezone": string;
     "Current": CurrentWeather | null;
     "Hourly": (HourlyWeather | null)[] | null;
 }

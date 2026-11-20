@@ -8,7 +8,7 @@ import EmptyLocation from "../components/EmptyLocation";
 
 import { formatTimeAgo } from "../time";
 import { HomeOutletContext } from "./Clock";
-import { getCurrentWeatherDataFor, getHourlyWeatherDataFor } from "../weather";
+import { getCurrentWeatherDataFor, getHourlyWeatherDataFor, getTimezone } from "../weather";
 
 import { TemperatureFormatOption, TimeFormatOption } from "../constants";
 
@@ -46,6 +46,8 @@ const Weather = () => {
     ? getHourlyWeatherDataFor(weatherData, homeLocation.id, isFahrenheit)
     : null;
 
+  const timezone = weatherData ? getTimezone(weatherData) : "";
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 pt-2">
       <div className="shrink-0 rounded-2xl border border-white/10 bg-[#0b1022] shadow-inner">
@@ -79,7 +81,7 @@ const Weather = () => {
             </div>
 
             {homeHourlyWeather && homeHourlyWeather.length > 0 && (
-              <HourlyStrip hourlyWeather={homeHourlyWeather} hour12={is12hr} />
+              <HourlyStrip hourlyWeather={homeHourlyWeather} hour12={is12hr} timezone={timezone} />
             )}
           </>
         ) : (
