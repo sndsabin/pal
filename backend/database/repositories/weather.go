@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"pal/backend/database/models"
 	"strings"
 	"time"
@@ -86,9 +87,16 @@ func (w *WeatherRepository) GetCurrentWeather(locationIds []int) ([]*models.Curr
 	return currentWeatherData, nil
 }
 
-func (w *WeatherRepository) GetHourlyWeather(locationId int) ([]*models.HourlyWeather, error) {
+func (w *WeatherRepository) GetHourlyWeather(locationId int, timezone string) ([]*models.HourlyWeather, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), QueryTimeoutDuration)
 	defer cancel()
+
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return nil, fmt.Errorf("error loading location timezone: %w", err)
+	}
+
+	today := time.Now().In(loc).Format("2006-01-02")
 
 	query := `
 		SELECT
@@ -103,12 +111,12 @@ func (w *WeatherRepository) GetHourlyWeather(locationId int) ([]*models.HourlyWe
 			created_at,
 			updated_at
 		FROM hourly_weather
-		WHERE DATE(forecast_at) = DATE('now') AND
-		location_id = $1
+		WHERE DATE(forecast_at) = DATE($1) AND
+		location_id = $2
 		ORDER BY forecast_at ASC;
 	`
 
-	rows, err := w.db.QueryContext(ctx, query, locationId)
+	rows, err := w.db.QueryContext(ctx, query, today, locationId)
 	if err != nil {
 		return nil, err
 	}
