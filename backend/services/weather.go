@@ -135,7 +135,7 @@ func (w *WeatherService) getOrRefreshWeatherData(payload WeatherPayload, ignoreC
 			}
 
 			// fetch hourly record
-			hourlyData, err := w.weatherRepository.GetHourlyWeather(location.ID, location.Timezone)
+			hourlyData, err := w.weatherRepository.GetHourlyWeather(location.ID)
 			if err != nil {
 				errChan <- fmt.Errorf("error fetching hourly weather record for location id %v: %w", location.ID, err)
 				return

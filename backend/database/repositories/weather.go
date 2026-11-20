@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"pal/backend/database/models"
 	"strings"
 	"time"
@@ -87,16 +86,27 @@ func (w *WeatherRepository) GetCurrentWeather(locationIds []int) ([]*models.Curr
 	return currentWeatherData, nil
 }
 
-func (w *WeatherRepository) GetHourlyWeather(locationId int, timezone string) ([]*models.HourlyWeather, error) {
+func (w *WeatherRepository) GetHourlyWeather(locationId int) ([]*models.HourlyWeather, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), QueryTimeoutDuration)
 	defer cancel()
 
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		return nil, fmt.Errorf("error loading location timezone: %w", err)
-	}
+	now := time.Now()
 
-	today := time.Now().In(loc).Format("2006-01-02")
+	// start of today (midnight)
+	startOfDay := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0, 0, 0, 0,
+		now.Location(),
+	)
+
+	startUTC := startOfDay.UTC().Format(time.RFC3339)
+
+	// beginning of tomorrow
+	endOfDay := startOfDay.AddDate(0, 0, 1)
+
+	endUTC := endOfDay.UTC().Format(time.RFC3339)
 
 	query := `
 		SELECT
@@ -111,12 +121,12 @@ func (w *WeatherRepository) GetHourlyWeather(locationId int, timezone string) ([
 			created_at,
 			updated_at
 		FROM hourly_weather
-		WHERE DATE(forecast_at) = DATE($1) AND
-		location_id = $2
+		WHERE location_id = $1
+		AND forecast_at >= $2 AND forecast_at < $3
 		ORDER BY forecast_at ASC;
 	`
 
-	rows, err := w.db.QueryContext(ctx, query, today, locationId)
+	rows, err := w.db.QueryContext(ctx, query, locationId, startUTC, endUTC)
 	if err != nil {
 		return nil, err
 	}
