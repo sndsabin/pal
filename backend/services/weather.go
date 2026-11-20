@@ -56,6 +56,10 @@ func (w *WeatherService) GetAllUserLocationWeatherData(ignoreCacheTTL bool) ([]*
 		locations = append(locations, *location)
 	}
 
+	if len(locations) == 0 {
+		return []*models.WeatherData{}, nil
+	}
+
 	result, err := w.getOrRefreshWeatherData(WeatherPayload{
 		Location: locations,
 	}, ignoreCacheTTL)
