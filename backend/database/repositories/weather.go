@@ -205,7 +205,8 @@ func (w *WeatherRepository) upsertCurrentWeather(ctx context.Context, tx *sql.Tx
 			temperature=excluded.temperature,
 			feels_like=excluded.feels_like,
 			condition=excluded.condition,
-			icon=excluded.icon
+			icon=excluded.icon,
+			updated_at=CURRENT_TIMESTAMP
 		RETURNING 
 			id,
 			location_id,
@@ -294,7 +295,8 @@ func (w *WeatherRepository) upsertHourlyWeather(ctx context.Context, tx *sql.Tx,
 			temperature=excluded.temperature,
 			feels_like=excluded.feels_like,
 			condition=excluded.condition,
-			icon=excluded.icon
+			icon=excluded.icon,
+			updated_at=CURRENT_TIMESTAMP
 		RETURNING
 			id,
 			location_id,

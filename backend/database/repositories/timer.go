@@ -152,7 +152,8 @@ func (t *TimerRepository) Update(timer models.Timer) (*models.Timer, error) {
 			duration=$2,
 			status=$3,
 			created_at=$4,
-			paused_at=$5
+			paused_at=$5,
+			updated_at=CURRENT_TIMESTAMP
 		WHERE id = $6
 		RETURNING
 			id,
@@ -185,7 +186,8 @@ func (t *TimerRepository) Complete(id int) (*models.Timer, error) {
 	query := `
 		UPDATE timers
 		SET
-			status=$1
+			status=$1,
+			updated_at=CURRENT_TIMESTAMP
 		WHERE status= $2 AND id = $3
 		RETURNING
 			id,
