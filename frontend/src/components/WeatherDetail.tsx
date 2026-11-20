@@ -10,6 +10,7 @@ interface Props {
   countryFlag: string;
   currentWeather: CurrentWeather | null;
   hourlyWeatherData: HourlyWeather[] | null;
+  locationTimezone: string;
   referenceTimezone: string;
   is12hr: boolean;
   isDay: boolean;
@@ -21,6 +22,7 @@ const WeatherDetail = ({
   countryFlag,
   currentWeather,
   hourlyWeatherData,
+  locationTimezone,
   referenceTimezone,
   is12hr,
   isDay,
@@ -71,7 +73,11 @@ const WeatherDetail = ({
         />
       </div>
 
-      <HourlyStrip hourlyWeather={hourlyWeather} hour12={is12hr} timezone={referenceTimezone} />
+      <HourlyStrip
+        hourlyWeather={hourlyWeather}
+        hour12={is12hr}
+        locationTimezone={locationTimezone}
+      />
     </>
   );
 };

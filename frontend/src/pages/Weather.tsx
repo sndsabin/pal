@@ -63,6 +63,7 @@ const Weather = () => {
         countryFlag={location.countryFlag}
         currentWeather={currentWeather}
         hourlyWeatherData={hourlyWeatherData}
+        locationTimezone={location.timezone}
         referenceTimezone={referenceTimezone}
         is12hr={is12hr}
         isDay={location.isDay}

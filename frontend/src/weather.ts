@@ -22,7 +22,11 @@ export const getHourlyWeatherForToday = (
     }
   }
 
-  return todayHourlyWeather;
+  return todayHourlyWeather.sort(
+    (a, b) =>
+      DateTime.fromISO(a.forecast_at, { zone: "utc" }).toMillis() -
+      DateTime.fromISO(b.forecast_at, { zone: "utc" }).toMillis(),
+  );
 };
 
 export const celsiusToFahrenheit = (celcius: number) => {
