@@ -7,9 +7,6 @@ interface Props {
 }
 
 const TabBar = ({ tabs }: Props) => {
-  // @TODO
-  const hasFinishedTimer = false;
-
   return (
     <nav aria-label="Sections" className="relative z-10 shrink-0 px-6 pt-3">
       <div className="grid grid-cols-3 gap-1 rounded-xl border border-white/15 bg-[#0b1022] p-1">
@@ -28,13 +25,6 @@ const TabBar = ({ tabs }: Props) => {
               <>
                 <Icon className={`h-3.5 w-3.5 ${isActive ? "text-blue-400" : ""}`} />
                 {label}
-                {to === "/timer" && hasFinishedTimer && (
-                  <span
-                    role="img"
-                    aria-label="Timer Up!"
-                    className="h-1.5 w-1.5 rounded-full bg-amber-400"
-                  />
-                )}
               </>
             )}
           </NavLink>
