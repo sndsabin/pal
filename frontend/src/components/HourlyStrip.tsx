@@ -59,7 +59,13 @@ const HourlyStrip = ({ hourlyWeather, hour12, timezone }: Props) => {
         onScroll={updateEdges}
         className="flex min-w-0 flex-1 snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
       >
-        {hourlyWeather.map((data, i) => {
+        {hourlyWeather.length === 0 && (
+          <span className="block w-full text-center text-[11px] leading-3 text-blue-200/70">
+            No hourly forecast available.
+          </span>
+        )}
+
+        {hourlyWeather.map((data: HourlyWeather, i) => {
           // forecast time is UTC. so convert it to specified timezone
           const forecastAt = DateTime.fromISO(data.forecast_at).setZone(timezone);
 

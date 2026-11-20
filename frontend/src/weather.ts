@@ -1,57 +1,83 @@
-import { WeatherData } from "./types";
+import { DateTime } from "luxon";
+import { CurrentWeather, HourlyWeather, WeatherData } from "./types";
 
-export const getCurrentWeatherDataFor = (
-  data: WeatherData[],
-  locationId: number,
-  toFahrenheit: boolean,
+export const getHourlyWeatherForToday = (
+  hourlyWeather: HourlyWeather[],
+  referenceTimezone: string,
 ) => {
-  const weatherData = getWeatherDataFor(data, locationId, toFahrenheit);
+  const today = DateTime.now().setZone(referenceTimezone);
+  const todayHourlyWeather = [];
 
-  return weatherData?.Current ?? null;
-};
+  for (const item of hourlyWeather) {
+    if (!item) {
+      continue;
+    }
 
-export const getHourlyWeatherDataFor = (
-  data: WeatherData[],
-  locationId: number,
-  toFahrenheit: boolean,
-) => {
-  const weatherData = getWeatherDataFor(data, locationId, toFahrenheit);
+    const forecastDate = DateTime.fromISO(item.forecast_at, {
+      zone: "utc",
+    }).setZone(referenceTimezone);
 
-  return weatherData?.Hourly?.filter((item) => item !== null) ?? null;
+    if (forecastDate.hasSame(today, "day")) {
+      todayHourlyWeather.push(item);
+    }
+  }
+
+  return todayHourlyWeather;
 };
 
 export const celsiusToFahrenheit = (celcius: number) => {
   return (celcius * 9) / 5 + 32;
 };
 
-const getWeatherDataFor = (data: WeatherData[], locationId: number, toFahrenheit: boolean) => {
-  let weatherData = data.find((item) => item.Current?.location_id === locationId);
-
+export const getWeatherDataByLocationId = (
+  weatherData: WeatherData[] | null,
+  isFahrenheit: boolean,
+) => {
   if (!weatherData) {
-    return null;
+    return {};
   }
 
-  if (!toFahrenheit) {
-    return weatherData;
+  const data: Record<
+    number,
+    {
+      current: CurrentWeather;
+      hourly: HourlyWeather[];
+    }
+  > = {};
+
+  for (const weather of weatherData) {
+    const current = weather.Current;
+
+    if (!current) {
+      continue;
+    }
+
+    const hourly = weather.Hourly ?? [];
+
+    data[current.location_id] = {
+      current: {} as CurrentWeather,
+      hourly: [],
+    };
+
+    data[current.location_id]["current"] = {
+      ...current,
+      temperature: isFahrenheit ? celsiusToFahrenheit(current.temperature) : current.temperature,
+      feels_like: isFahrenheit ? celsiusToFahrenheit(current.feels_like) : current.feels_like,
+    };
+    data[current.location_id]["hourly"] = [];
+
+    for (const item of hourly) {
+      if (!item) {
+        continue;
+      }
+
+      data[current.location_id]["hourly"].push({
+        ...item,
+        temperature: isFahrenheit ? celsiusToFahrenheit(item.temperature) : item.temperature,
+        feels_like: isFahrenheit ? celsiusToFahrenheit(item.feels_like) : item.feels_like,
+      });
+    }
   }
 
-  return {
-    ...weatherData,
-    Current: weatherData.Current
-      ? {
-          ...weatherData.Current,
-          temperature: celsiusToFahrenheit(weatherData.Current.temperature),
-          feels_like: celsiusToFahrenheit(weatherData.Current.feels_like),
-        }
-      : weatherData.Current,
-    Hourly: weatherData.Hourly?.map((item) =>
-      item
-        ? {
-            ...item,
-            temperature: celsiusToFahrenheit(item.temperature),
-            feels_like: celsiusToFahrenheit(item.feels_like),
-          }
-        : item,
-    ),
-  };
+  return data;
 };

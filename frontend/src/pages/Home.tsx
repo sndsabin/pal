@@ -8,7 +8,6 @@ import ErrorCard from "../components/ErrorCard";
 
 import { api } from "../api";
 import useMinuteTick from "../hooks/useMinuteTick";
-import { getCurrentWeatherDataFor } from "../weather";
 import { getDateTime, getTimeDifference } from "../time";
 
 import { TemperatureFormatOption, TimeFormatOption } from "../constants";
@@ -22,6 +21,7 @@ import type {
   WeatherData,
   TemperatureFormat,
 } from "../types";
+import { getWeatherDataByLocationId } from "../weather";
 
 const Home = () => {
   const tick = useMinuteTick();
@@ -71,11 +71,6 @@ const Home = () => {
 
     return unsubscribeWeatherRefreshedEvent;
   }, []);
-
-  useEffect(() => {
-    // if home location changes, refetch
-    getWeatherData(true);
-  }, [rawHomeLocation]);
 
   const homeLocation: HomeLocation | null = useMemo(() => {
     if (!rawHomeLocation) return null;
@@ -137,6 +132,11 @@ const Home = () => {
     }
   };
 
+  const isFahrenheit = temperatureFormat === TemperatureFormatOption.TemperatureFormatFahrenheit;
+  const weatherByLocationId = useMemo(() => {
+    return getWeatherDataByLocationId(weatherData, isFahrenheit);
+  }, [weatherData, isFahrenheit]);
+
   const tabs = [
     { to: "/", label: "Clocks", Icon: Clock },
     { to: "/weather", label: "Weather", Icon: CloudSun },
@@ -148,13 +148,7 @@ const Home = () => {
       <Header
         homeLocation={homeLocation}
         currentWeather={
-          weatherData && homeLocation
-            ? getCurrentWeatherDataFor(
-                weatherData,
-                homeLocation.id,
-                temperatureFormat === TemperatureFormatOption.TemperatureFormatFahrenheit,
-              )
-            : null
+          homeLocation ? (weatherByLocationId[homeLocation.id]?.["current"] ?? null) : null
         }
       />
       <TabBar tabs={tabs} />

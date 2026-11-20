@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import WeatherIcon from "./WeatherIcon";
 import EmptyLocation from "./EmptyLocation";
 
-import { getCurrentWeatherDataFor } from "../weather";
 import { TemperatureFormatOption } from "../constants";
 
 import type { TrackedLocation, WeatherData } from "../types";
+import { getWeatherDataByLocationId } from "../weather";
+import { useMemo } from "react";
 
 interface Props {
   locations: TrackedLocation[];
@@ -17,6 +18,12 @@ interface Props {
 
 const TrackedLocationsList = ({ locations, weatherData, temperatureFormat, onDelete }: Props) => {
   const navigate = useNavigate();
+
+  const isFahrenheit = temperatureFormat === TemperatureFormatOption.TemperatureFormatFahrenheit;
+
+  const weatherDataByLocationId = useMemo(() => {
+    return getWeatherDataByLocationId(weatherData, isFahrenheit);
+  }, [weatherData]);
 
   return (
     <div className="custom-scrollbar min-h-0 flex-1 divide-y divide-white/10 overflow-y-auto px-6 py-2">
@@ -29,13 +36,8 @@ const TrackedLocationsList = ({ locations, weatherData, temperatureFormat, onDel
         />
       )}
       {locations.map((location) => {
-        let currentWeather = weatherData
-          ? getCurrentWeatherDataFor(
-              weatherData,
-              location.id,
-              temperatureFormat === TemperatureFormatOption.TemperatureFormatFahrenheit,
-            )
-          : null;
+        const currentWeather = weatherDataByLocationId[location.id]?.["current"] ?? null;
+
         return (
           <div key={location.id} className="group flex items-center justify-between py-3.5">
             <div className="flex items-center space-x-3">
