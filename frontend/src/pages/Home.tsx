@@ -72,6 +72,11 @@ const Home = () => {
     return unsubscribeWeatherRefreshedEvent;
   }, []);
 
+  useEffect(() => {
+    // if home location changes, refetch
+    getWeatherData(true);
+  }, [rawHomeLocation]);
+
   const homeLocation: HomeLocation | null = useMemo(() => {
     if (!rawHomeLocation) return null;
 
