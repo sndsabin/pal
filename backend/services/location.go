@@ -1,14 +1,20 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"pal/backend/database/models"
 	"pal/backend/database/repositories"
 	"pal/backend/logging"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
+
+const homelocationUpdatedEvent = "location:home:updated"
 
 type LocationService struct {
 	logger                   *logging.Logger
+	event                    *application.EventManager
 	locationSearchRepository repositories.LocationSearchRepository
 	userLocationRepository   repositories.UserLocationRepository
 }
@@ -35,6 +41,11 @@ func NewLocationService(
 		locationSearchRepository: lsRepo,
 		userLocationRepository:   ulRepo,
 	}
+}
+
+func (l *LocationService) ServiceStartup(ctx context.Context, opts application.ServiceOptions) error {
+	l.event = application.Get().Event
+	return nil
 }
 
 func (l *LocationService) SearchLocation(name string, limit int) ([]models.LocationSearchResult, error) {
@@ -109,14 +120,19 @@ func (l *LocationService) UpsertHomeLocation(location LocationPayload) error {
 
 	if isNew {
 		err = l.userLocationRepository.Create(homeLocation)
-	} else {
-		err = l.userLocationRepository.Update(homeLocation)
+		if err != nil {
+			l.logger.Error("error creating home location", "err", err)
+			return errors.New("error creating home location")
+		}
 	}
 
+	err = l.userLocationRepository.Update(homeLocation)
 	if err != nil {
 		l.logger.Error("error updating home location", "err", err)
 		return errors.New("error updating home location")
 	}
+
+	l.event.Emit(homelocationUpdatedEvent)
 
 	return nil
 }

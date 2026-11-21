@@ -15,7 +15,7 @@ import type {
   WeatherData,
 } from "../types";
 
-export type HomeOutletContext = {
+export interface HomeOutletContext {
   homeLocation: HomeLocation | null;
   trackedLocations: TrackedLocation[];
   isLocationLoading: boolean;
@@ -25,7 +25,7 @@ export type HomeOutletContext = {
   onError: (err: unknown) => void;
   onRefreshWeather: (ignoreWeatherCacheTTL?: boolean) => Promise<void>;
   onTrackedLocationDelete: (id: number) => Promise<void>;
-};
+}
 
 const Clock = () => {
   const navigate = useNavigate();

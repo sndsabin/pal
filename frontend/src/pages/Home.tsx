@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import { Clock, CloudSun, TimerIcon } from "lucide-react";
 
 import Header from "../components/Header";
@@ -23,8 +23,14 @@ import type {
 } from "../types";
 import { getWeatherDataByLocationId } from "../weather";
 
+interface AppContext {
+  forceWeatherRefresh: boolean;
+}
+
 const Home = () => {
   const tick = useMinuteTick();
+  const { forceWeatherRefresh } = useOutletContext<AppContext>();
+
   const [error, setError] = useState<ErrorState | null>(null);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
   const [rawHomeLocation, setRawHomeLocation] = useState<UserLocation | null>(null);
@@ -65,11 +71,13 @@ const Home = () => {
         setIsLocationLoading(false);
       });
 
-    getWeatherData();
+    getWeatherData(forceWeatherRefresh);
 
     const unsubscribeWeatherRefreshedEvent = api.onWeatherRefreshed(getWeatherData);
 
-    return unsubscribeWeatherRefreshedEvent;
+    return () => {
+      unsubscribeWeatherRefreshedEvent();
+    };
   }, []);
 
   const homeLocation: HomeLocation | null = useMemo(() => {
@@ -121,9 +129,9 @@ const Home = () => {
     }
   };
 
-  const getWeatherData = async (ignoreWeatherCacheTTL: boolean = false) => {
+  const getWeatherData = async (forceRefresh: boolean = false) => {
     try {
-      const record = await api.getWeatherData(ignoreWeatherCacheTTL);
+      const record = await api.getWeatherData(forceRefresh);
       if (record) {
         setWeatherData(record.filter((data: WeatherData | null) => data !== null));
       }

@@ -21,14 +21,17 @@ import {
   StartTimer,
 } from "../bindings/pal/backend/services/timerservice";
 
+import { GetAllUserLocationWeatherData } from "../bindings/pal/backend/services/weatherservice";
+
 import {
+  HOME_LOCATION_UPDATED_EVENT,
   TIMER_COMPLETED_EVENT,
   WEATHER_REFRESHED_EVENT,
   WINDOW_HIDE_EVENT,
   WINDOW_SHOW_EVENT,
 } from "./constants";
-import { Timer } from "./types";
-import { GetAllUserLocationWeatherData } from "../bindings/pal/backend/services/weatherservice";
+
+import type { Timer } from "./types";
 
 export const api = {
   searchLocation: SearchLocation,
@@ -36,8 +39,8 @@ export const api = {
   upsertHomeLocation: UpsertHomeLocation,
   getUserPreference: GetUserPreference,
   getTrackedLocation: GetTrackedLocation,
-  getWeatherData: async (ignoreCacheTTL: boolean = false) => {
-    return await GetAllUserLocationWeatherData(ignoreCacheTTL);
+  getWeatherData: async (forceRefresh: boolean = false) => {
+    return await GetAllUserLocationWeatherData(forceRefresh);
   },
   getAllTimers: GetAllTimers,
   addTrackedLocation: AddTrackedLocation,
@@ -69,6 +72,14 @@ export const api = {
   onTimerCompleted: (handler: (timer: Timer) => void) => {
     const unsubscribe = Events.On(TIMER_COMPLETED_EVENT, (event) => {
       handler(event.data);
+    });
+
+    // cleanup
+    return unsubscribe;
+  },
+  onHomeLocationUpdated: (handler: () => void) => {
+    const unsubscribe = Events.On(HOME_LOCATION_UPDATED_EVENT, (event) => {
+      handler();
     });
 
     // cleanup

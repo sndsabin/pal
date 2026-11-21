@@ -6,6 +6,8 @@ export const DayPeriodOption = {
 export const WINDOW_SHOW_EVENT = "window:show";
 export const WINDOW_HIDE_EVENT = "window:hide";
 
+export const HOME_LOCATION_UPDATED_EVENT = "location:home:updated";
+
 export const WEATHER_REFRESHED_EVENT = "weather:refreshed";
 
 export const TIMER_COMPLETED_EVENT = "timer:completed";

@@ -12,8 +12,8 @@ import * as models$0 from "../database/models/models.js";
 // @ts-ignore: Unused imports
 import * as weather$0 from "../weather/models.js";
 
-export function GetAllUserLocationWeatherData(ignoreCacheTTL: boolean): $CancellablePromise<(models$0.WeatherData | null)[] | null> {
-    return $Call.ByID(2796791824, ignoreCacheTTL);
+export function GetAllUserLocationWeatherData(forceRefresh: boolean): $CancellablePromise<(models$0.WeatherData | null)[] | null> {
+    return $Call.ByID(2796791824, forceRefresh);
 }
 
 export function GetWWOConditionFor(code: number): $CancellablePromise<weather$0.WeatherCondition> {
