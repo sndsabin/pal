@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"errors"
 	"fmt"
@@ -11,23 +10,20 @@ import (
 	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
-	"github.com/wailsapp/wails/v3/pkg/updater"
-	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
 
 const (
 	AppName         = "pal"
 	AppVersion      = "0.1.0"
 	AppDescription  = "A system tray app for staying in sync with moments across the world."
+	AppHomePage     = "https://pal.sabinb.com.np/"
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
-	repository      = "sndsabin/pal"
 	namespace       = "np.com.sabinb.pal"
 )
 
@@ -150,12 +146,10 @@ func main() {
 	*
 	 */
 	menu := app.NewMenu()
-	menu.Add("Check for updates").OnClick(func(_ *application.Context) {
-		go func() {
-			if err := app.Updater.CheckAndInstall(context.Background()); err != nil {
-				backendApp.Logger.Error("error updating app: %w", err)
-			}
-		}()
+	menu.Add("Get latest version").OnClick(func(_ *application.Context) {
+		if err := app.Browser.OpenURL(AppHomePage); err != nil {
+			backendApp.Logger.Error("error opening app homepage", "err", err)
+		}
 	})
 	menu.AddSeparator()
 	menu.Add("Quit").OnClick(func(_ *application.Context) {
@@ -169,9 +163,6 @@ func main() {
 	systemTray.AttachWindow(window)
 	systemTray.WindowOffset(5) // doesn't work on wayland
 
-	// configure updater
-	configureAppUpdater(app, backendApp.Logger)
-
 	// register event handlers
 	backendApp.RegisterEventHandlers(app, window)
 
@@ -184,49 +175,10 @@ func main() {
 	}
 }
 
-func configureAppUpdater(app *application.App, logger *logging.Logger) {
-	gh, err := github.New(github.Config{
-		Repository:    repository,
-		ChecksumAsset: "SHA256SUMS",
-		AssetMatcher:  assetMatcher,
-	})
-	if err != nil {
-		logger.Error("error initializing github update provider", "err", err)
-		return
+func downloadUpdate(app *application.App, logger *logging.Logger) {
+	if err := app.Browser.OpenURL(AppHomePage); err != nil {
+		logger.Error("error opening app homepage", "err", err)
 	}
-
-	err = app.Updater.Init(updater.Config{
-		CurrentVersion: AppVersion,
-		Providers:      []updater.Provider{gh},
-	})
-	if err != nil {
-		logger.Error("error initializing app updater", "err", err)
-	}
-}
-
-func assetMatcher(req updater.CheckRequest, assets []github.ReleaseAsset) int {
-	platform := strings.ToLower(req.Platform)
-
-	var suffix string
-
-	switch platform {
-	case "windows":
-		suffix = "_installer.exe"
-	case "darwin":
-		suffix = ".dmg"
-	case "linux":
-		suffix = ".AppImage"
-	default:
-		return -1
-	}
-
-	for i, asset := range assets {
-		if strings.HasSuffix(strings.ToLower(asset.Name), strings.ToLower(suffix)) {
-			return i
-		}
-	}
-
-	return -1
 }
 
 func initCrashLog() {
