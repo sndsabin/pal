@@ -1,16 +1,29 @@
 import { useNavigate } from "react-router-dom";
 
+import WeatherIcon from "./WeatherIcon";
 import EmptyLocation from "./EmptyLocation";
 
-import { TrackedLocation } from "../types";
+import { TemperatureFormatOption } from "../constants";
+
+import type { TrackedLocation, WeatherData } from "../types";
+import { getWeatherDataByLocationId } from "../weather";
+import { useMemo } from "react";
 
 interface Props {
   locations: TrackedLocation[];
+  weatherData: WeatherData[] | null;
+  temperatureFormat: string;
   onDelete: (id: number) => void;
 }
 
-const TrackedLocationsList = ({ locations, onDelete }: Props) => {
+const TrackedLocationsList = ({ locations, weatherData, temperatureFormat, onDelete }: Props) => {
   const navigate = useNavigate();
+
+  const isFahrenheit = temperatureFormat === TemperatureFormatOption.TemperatureFormatFahrenheit;
+
+  const weatherDataByLocationId = useMemo(() => {
+    return getWeatherDataByLocationId(weatherData, isFahrenheit);
+  }, [weatherData]);
 
   return (
     <div className="custom-scrollbar min-h-0 flex-1 divide-y divide-white/10 overflow-y-auto px-6 py-2">
@@ -23,6 +36,8 @@ const TrackedLocationsList = ({ locations, onDelete }: Props) => {
         />
       )}
       {locations.map((location) => {
+        const currentWeather = weatherDataByLocationId[location.id]?.["current"] ?? null;
+
         return (
           <div key={location.id} className="group flex items-center justify-between py-3.5">
             <div className="flex items-center space-x-3">
@@ -54,7 +69,10 @@ const TrackedLocationsList = ({ locations, onDelete }: Props) => {
                 </div>
 
                 <p className="mt-0.5 text-xs">
-                  <span className="text-blue-200/60"> {location.timeDifference} </span>
+                  <span className="inline-block min-w-[6.5rem] text-blue-200/60">
+                    {" "}
+                    {location.timeDifference}{" "}
+                  </span>
                   <span className="mx-1 text-white/20">•</span>
                   <span className="text-blue-100/80"> {location.date} </span>
                 </p>
@@ -65,6 +83,19 @@ const TrackedLocationsList = ({ locations, onDelete }: Props) => {
                 {location.time}
                 <span className="text-xs text-blue-100/80"> {location.dayPeriod} </span>
               </span>
+
+              <div className="mt-0.5 flex h-4 items-center justify-end gap-1 text-xs text-blue-200/70">
+                {currentWeather && (
+                  <>
+                    <WeatherIcon
+                      condition={currentWeather.condition}
+                      isDay={location.isDay}
+                      className="h-3.5 w-3.5"
+                    />
+                    {currentWeather.temperature}°
+                  </>
+                )}
+              </div>
             </div>
           </div>
         );

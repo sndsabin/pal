@@ -28,6 +28,7 @@ const (
 	windowShowEvent = "window:show"
 	windowHideEvent = "window:hide"
 	repository      = "sndsabin/pal"
+	namespace       = "np.com.sabinb.pal"
 )
 
 //go:embed assets/icons/icon.png
@@ -94,6 +95,9 @@ func main() {
 			application.NewService(backendApp.LocationService),
 			application.NewService(backendApp.UserPreferenceService),
 			application.NewService(backendApp.ApplicationInfoService),
+			application.NewService(backendApp.WeatherService),
+			application.NewService(backendApp.TimerService),
+			application.NewService(backendApp.NotificationService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -103,6 +107,9 @@ func main() {
 		},
 		Windows: application.WindowsOptions{
 			DisableQuitOnLastWindowClosed: true,
+		},
+		SingleInstance: &application.SingleInstanceOptions{
+			UniqueID: namespace,
 		},
 	})
 
@@ -165,6 +172,9 @@ func main() {
 	// configure updater
 	configureAppUpdater(app, backendApp.Logger)
 
+	// register event handlers
+	backendApp.RegisterEventHandlers(app, window)
+
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()
 
@@ -181,7 +191,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		AssetMatcher:  assetMatcher,
 	})
 	if err != nil {
-		logger.Error("error initializing github update provider: ", "err", err)
+		logger.Error("error initializing github update provider", "err", err)
 		return
 	}
 
@@ -190,7 +200,7 @@ func configureAppUpdater(app *application.App, logger *logging.Logger) {
 		Providers:      []updater.Provider{gh},
 	})
 	if err != nil {
-		logger.Error("error initializing app updater: ", "err", err)
+		logger.Error("error initializing app updater", "err", err)
 	}
 }
 

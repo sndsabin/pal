@@ -24,7 +24,16 @@ func (up *UserPreferenceRepository) GetById(id int) (*models.UserPreference, err
 	defer cancel()
 
 	query := `
-		SELECT id, time_format, created_at, updated_at FROM user_preferences WHERE id = $1;
+		SELECT 
+			id, 
+			time_format,
+			temperature_format,
+			alert_sound,
+			created_at, 
+			updated_at 
+		FROM 
+			user_preferences 
+		WHERE id = $1;
 	`
 
 	row := up.db.QueryRowContext(ctx, query, id)
@@ -34,6 +43,8 @@ func (up *UserPreferenceRepository) GetById(id int) (*models.UserPreference, err
 	err := row.Scan(
 		&userPreference.ID,
 		&userPreference.TimeFormat,
+		&userPreference.TemperatureFormat,
+		&userPreference.AlertSound,
 		&userPreference.CreatedAt,
 		&userPreference.UpdatedAt,
 	)
@@ -51,14 +62,17 @@ func (up *UserPreferenceRepository) Update(userPreference models.UserPreference)
 	query := `
 		UPDATE user_preferences
 		SET
-			time_format=$1
-		WHERE id = $2;
+			time_format=$1,
+			temperature_format=$2,
+			alert_sound=$3
+		WHERE id = $4;
 	`
-
 	_, err := up.db.ExecContext(
 		ctx,
 		query,
 		userPreference.TimeFormat,
+		userPreference.TemperatureFormat,
+		userPreference.AlertSound,
 		userPreference.ID,
 	)
 	if err != nil {

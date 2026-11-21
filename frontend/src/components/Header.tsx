@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { Plus, Settings } from "lucide-react";
 
-import { HomeLocation } from "../types";
+import WeatherIcon from "./WeatherIcon";
+
+import type { CurrentWeather, HomeLocation } from "../types";
 
 interface Props {
   homeLocation: HomeLocation | null;
+  currentWeather: CurrentWeather | null;
 }
 
-const Header = ({ homeLocation }: Props) => {
+const Header = ({ homeLocation, currentWeather }: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -34,6 +37,18 @@ const Header = ({ homeLocation }: Props) => {
             <div className="mt-1 text-[12px] leading-none text-blue-200/70">
               <span className="font-flags">{homeLocation.countryFlag}</span>
               <span className="ml-1.5">{homeLocation.name}</span>
+
+              {currentWeather && (
+                <>
+                  <span className="mx-1.5 text-white/30">•</span>
+                  <WeatherIcon
+                    condition={currentWeather.condition}
+                    isDay={homeLocation.isDay}
+                    className="mb-0.5 inline h-3 w-3"
+                  />
+                  <span className="ml-1 text-blue-100/80">{currentWeather.temperature}°</span>
+                </>
+              )}
             </div>
           </>
         )}
