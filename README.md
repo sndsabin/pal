@@ -12,15 +12,15 @@
 
 pal (पल), Nepali for “a moment in time”. Pronounced simply “pal.”
 
-Pal is a simple system tray app for keeping track of time across the world.
+Pal is a system tray app for keeping track of time, weather across the world.
 
-Add the cities and locations that matter to you and see their local times at a glance. Pal also makes it easy to answer everyday timezone questions:
+Add the cities and locations that matter to you to see their local times and live weather conditions at a glance. Pal also makes it easy to answer everyday timezone questions with a built-in time converter:
 
 > “When it’s 4 PM in Tokyo, what time is it in Kathmandu?”
 
-With pal, you can quickly compare locations and find the corresponding time in another part of the world without doing the math.
+With pal, you can quickly compare locations and find the corresponding time in another part of the world without doing the math. Switch over to check real-time temperatures, hourly forecasts, and conditions across all your saved cities, or set quick countdown timers with optional custom labels and audio alerts right from your tray.
 
-Whether you work with people around the world, have friends and family in different time zones, or simply want an easier way to keep track of global time, pal helps you stay in sync with every moment, wherever it happens.
+Whether you work with people around the world, have friends and family in different time zones, or simply want a all-in-one utility for global time, weather, and timers, pal helps you stay in sync with every moment, wherever it happens.
 
 ![app-demo](./docs/images/app.png)
 
