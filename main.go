@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"pal/backend"
-	"pal/backend/logging"
 	"pal/backend/workspace"
 	"path/filepath"
 	"runtime"
@@ -172,12 +171,6 @@ func main() {
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {
 		log.Fatal(err)
-	}
-}
-
-func downloadUpdate(app *application.App, logger *logging.Logger) {
-	if err := app.Browser.OpenURL(AppHomePage); err != nil {
-		logger.Error("error opening app homepage", "err", err)
 	}
 }
 
