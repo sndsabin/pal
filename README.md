@@ -1,4 +1,6 @@
-![Pal Banner](docs/images/banner.png)
+<p align="center"> 
+<img src="docs/images/logo.png" alt="Pal logo" width="150" />
+</p>
 
 <div align="center">
 <a href="https://apps.microsoft.com/detail/9pdqpbgn6d3t" target="_blank">
@@ -22,7 +24,7 @@ With pal, you can quickly compare locations and find the corresponding time in a
 
 Whether you work with people around the world, have friends and family in different time zones, or simply want a all-in-one utility for global time, weather, and timers, pal helps you stay in sync with every moment, wherever it happens.
 
-![app-demo](./docs/images/app.png)
+![app-demo](./docs/images/mac/app.jpeg)
 
 ## Getting Started
 
