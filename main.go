@@ -18,7 +18,7 @@ import (
 
 const (
 	AppName         = "pal"
-	AppVersion      = "0.1.0"
+	AppVersion      = "0.1.1"
 	AppDescription  = "A system tray app for staying in sync with moments across the world."
 	AppHomePage     = "https://pal.sabinb.com.np/"
 	windowShowEvent = "window:show"
