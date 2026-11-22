@@ -4,6 +4,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="pal is a system tray app with world clocks, weather, a time converter and a quick timer for the cities and people you care about."
+    />
     <link rel="icon" type="image/png" href="/images/logo.png" />
 
     <title>pal — a system tray app</title>
@@ -17,6 +21,7 @@
     />
 
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/features.css" />
   </head>
 
   <body>
@@ -39,7 +44,8 @@
 
               <p class="hero-description">
                 A system tray app that keeps the cities and people you care
-                about at a glance, always in sync.
+                about at a glance, always in sync. World clocks, live weather, a
+                time converter and a timer, one click from your menu bar.
               </p>
 
               <div class="hero-actions">
@@ -52,8 +58,8 @@
                   Download pal
                 </a>
 
-                <a href="#download" class="download-button secondary-button">
-                  All platforms
+                <a href="#features" class="download-button secondary-button">
+                  See features
                   <span class="arrow">↓</span>
                 </a>
               </div>
@@ -81,11 +87,111 @@
             <div class="app-preview-wrap">
               <div class="app-preview-glow"></div>
 
+              <img src="/images/app.png" alt="app-home" class="app-preview" />
+            </div>
+          </div>
+        </section>
+
+        <section id="features" class="features container">
+          <div class="features-heading">
+            <p class="features-eyebrow">What's inside</p>
+            <h2 class="features-title">
+              Everything time-related, in your tray
+            </h2>
+          </div>
+
+          <!-- Clocks -->
+          <div class="feature-row">
+            <div class="feature-copy">
+              <span class="feature-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+                Clocks
+              </span>
+              <h3>See where everyone is, at a glance</h3>
+              <p>
+                Add the cities that matter and pal shows each one's local time,
+                date and current weather, plus exactly how far ahead or behind
+                it is from home.
+              </p>
+            </div>
+
+            <div class="feature-shot">
+              <img src="/images/app.png" alt="clock tab" loading="lazy" />
+            </div>
+          </div>
+
+          <!-- Weather -->
+          <div class="feature-row reverse">
+            <div class="feature-copy">
+              <span class="feature-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 18a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 17 9a4.5 4.5 0 0 1 0 9H7Z"
+                  />
+                </svg>
+                Weather
+              </span>
+              <h3>Weather for every place you track</h3>
+              <p>
+                A detailed view of your home city with the current temperature,
+                feels-like reading and a scrollable hourly forecast, followed by
+                conditions for all your other locations.
+              </p>
+            </div>
+
+            <div class="feature-shot">
+              <img src="images/weather.png" alt="Weather tab" loading="lazy" />
+            </div>
+          </div>
+
+          <!-- Time converter -->
+          <div class="feature-row">
+            <div class="feature-copy">
+              <span class="feature-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 8h13l-3-3M20 16H7l3 3" />
+                </svg>
+                Time Converter
+              </span>
+              <h3>Plan the call without the mental math</h3>
+              <p>
+                Pick a date, a time and a city, and instantly see what time it
+                will be in your other locations. Daylight saving changes are
+                handled for you.
+              </p>
+            </div>
+
+            <div class="feature-shot">
               <img
-                src="/images/app.png"
-                alt="pal app preview"
-                class="app-preview"
+                src="images/time-converter.png"
+                alt="Time Converter"
+                loading="lazy"
               />
+            </div>
+          </div>
+
+          <!-- Timer -->
+          <div class="feature-row reverse">
+            <div class="feature-copy">
+              <span class="feature-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="13" r="8" />
+                  <path d="M12 9v4l2 2M9 2h6" />
+                </svg>
+                Timer
+              </span>
+              <h3>A quick timer, right where you are</h3>
+              <p>
+                Start a countdown without opening another app. The progress ring
+                and the exact time the alarm will ring keep you on track.
+              </p>
+            </div>
+
+            <div class="feature-shot">
+              <img src="images/timer.png" alt="Timer tab" loading="lazy" />
             </div>
           </div>
         </section>
@@ -226,7 +332,7 @@
       </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", () => {
         const APP_VERSION = "__APP_VERSION__";
 
