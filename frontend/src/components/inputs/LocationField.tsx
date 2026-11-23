@@ -110,7 +110,7 @@ const LocationField = ({
         </div>
 
         {showSuggestions && (
-          <div className="absolute top-full right-0 left-0 z-[9999] mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white/15 bg-[#0b1022] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+          <div className="absolute top-full right-0 left-0 z-[9999] mt-2 max-h-44 overflow-y-auto rounded-2xl border border-white/15 bg-[#0b1022] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
             {locationSuggestions.length > 0 ? (
               <div className="py-1.5">
                 {locationSuggestions.map((location, index) => {

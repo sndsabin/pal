@@ -5,7 +5,7 @@ import { api } from "../api";
 import type { LocationSearchResult } from "../types";
 
 const TIME_DELAY = 300;
-const SUGGESTION_LIMIT = 3;
+const SUGGESTION_LIMIT = 30;
 const MIN_QUERY_LENGTH = 2;
 
 const useLocationSearch = (query: string) => {
